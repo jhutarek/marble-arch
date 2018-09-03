@@ -30,7 +30,9 @@ abstract class MarbleFragment<M : MarbleViewModel<S>, S : State> : Fragment() {
                 .distinctUntilChanged()
                 .observeOn(mainThread())
                 .subscribe({
+                    // TODO disable sending events from fragment to view model when rendering state
                     renderState(it)
+                    // TODO enable sending events
                 }, {
                     throw IllegalStateException("Error notification must not reach the fragment - handle errors upstream in view model: $it")
                 })
