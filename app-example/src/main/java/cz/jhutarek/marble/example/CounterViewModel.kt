@@ -1,5 +1,6 @@
 package cz.jhutarek.marble.example
 
+import cz.jhutarek.marble.arch.mvvm.model.MarbleState
 import cz.jhutarek.marble.arch.mvvm.presentation.MarbleViewModel
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -7,7 +8,7 @@ import javax.inject.Singleton
 @Singleton
 class CounterViewModel @Inject constructor() : MarbleViewModel<CounterViewModel.State>(State()) {
 
-    data class State(val counter: Int = 0) : cz.jhutarek.marble.arch.mvvm.model.State
+    data class State(val counter: Int = 0) : MarbleState
 
     fun increase() {
         update { it.copy(counter = it.counter + 1) }

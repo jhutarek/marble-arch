@@ -6,14 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
-import cz.jhutarek.marble.arch.mvvm.model.State
+import cz.jhutarek.marble.arch.mvvm.model.MarbleState
 import cz.jhutarek.marble.arch.mvvm.presentation.MarbleViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 // TODO test
-abstract class MarbleFragment<M : MarbleViewModel<S>, S : State> : Fragment() {
+abstract class MarbleFragment<M : MarbleViewModel<S>, S : MarbleState> : Fragment() {
 
     @Inject protected lateinit var viewModel: M
     protected abstract val layoutResId: Int
