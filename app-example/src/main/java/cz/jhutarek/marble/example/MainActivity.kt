@@ -2,7 +2,7 @@ package cz.jhutarek.marble.example
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import cz.jhutarek.marble.R
+import cz.jhutarek.marblearch.R
 
 class MainActivity : AppCompatActivity() {
 

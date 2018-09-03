@@ -5,11 +5,10 @@ import cz.jhutarek.marble.arch.mvvm.model.State
 import io.reactivex.Observable
 
 // TODO test
-abstract class MarbleViewModel<S : State> {
+abstract class MarbleViewModel<S : State>(private val defaultState: S) {
 
-    private val statesRelay: BehaviorRelay<S> by lazy { BehaviorRelay.createDefault(defaultState) } // TODO is this 'lazy' trick OK?
+    private val statesRelay: BehaviorRelay<S> = BehaviorRelay.createDefault(defaultState)
     val states: Observable<S> = statesRelay.hide()
-    protected abstract val defaultState: S
 
     protected fun update(updater: (S) -> S) {
         statesRelay.accept(updater(statesRelay.value))
