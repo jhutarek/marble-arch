@@ -8,6 +8,7 @@ import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
 import cz.jhutarek.marble.arch.mvvm.model.State
 import cz.jhutarek.marble.arch.mvvm.presentation.MarbleViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
@@ -27,6 +28,7 @@ abstract class MarbleFragment<M : MarbleViewModel<S>, S : State> : Fragment() {
 
         statesDisposable = viewModel.states
                 .distinctUntilChanged()
+                .observeOn(mainThread())
                 .subscribe({
                     renderState(it)
                 }, {
