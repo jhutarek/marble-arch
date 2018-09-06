@@ -20,7 +20,7 @@ class CounterFragment : MarbleFragment<CounterViewModel, CounterViewModel.State>
     }
 
     override fun onBindStates(states: Observable<CounterViewModel.State>) = states.subscribeForViews {
-        textInput.setText(counter.toString())
+        textInput.setText(it.counter.toString())
     }
 
     override fun onBindViews() {
