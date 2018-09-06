@@ -7,10 +7,10 @@ import io.reactivex.Observable
 // TODO test
 abstract class MarbleViewModel<S : MarbleState>(defaultState: S) {
 
-    private val statesRelay: BehaviorRelay<S> = BehaviorRelay.createDefault(defaultState)
+    protected val statesRelay: BehaviorRelay<S> = BehaviorRelay.createDefault(defaultState)
     val states: Observable<S> = statesRelay.hide()
 
-    protected fun updateState(updater: (S) -> S) {
-        statesRelay.accept(updater(statesRelay.value))
+    protected fun BehaviorRelay<S>.accept(updater: S.() -> S) {
+        accept(updater(value))
     }
 }
