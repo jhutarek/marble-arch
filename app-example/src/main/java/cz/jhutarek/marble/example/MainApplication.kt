@@ -2,6 +2,7 @@ package cz.jhutarek.marble.example
 
 import android.app.Application
 import android.content.Context
+import com.squareup.leakcanary.LeakCanary
 import cz.jhutarek.marble.arch.mvvm.ui.MarbleMvvm
 import dagger.Component
 import javax.inject.Singleton
@@ -24,6 +25,9 @@ class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        if (LeakCanary.isInAnalyzerProcess(this)) return
+        LeakCanary.install(this)
 
         MarbleMvvm.initialize()
 
