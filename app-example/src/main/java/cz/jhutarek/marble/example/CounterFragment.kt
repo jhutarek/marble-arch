@@ -6,7 +6,6 @@ import com.jakewharton.rxbinding2.widget.textChanges
 import cz.jhutarek.marble.arch.mvvm.ui.MarbleFragment
 import cz.jhutarek.marblearch.R
 import io.reactivex.Observable
-import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.counter_fragment.*
 
 class CounterFragment : MarbleFragment<CounterViewModel, CounterViewModel.State>() {
@@ -26,7 +25,7 @@ class CounterFragment : MarbleFragment<CounterViewModel, CounterViewModel.State>
         textInput.textChanges().subscribeForViewModel { setValue(it.toString()) }
     }
 
-    override fun onBindStates(states: Observable<CounterViewModel.State>): Disposable = states.subscribeForViews {
+    override fun onBindStates(states: Observable<CounterViewModel.State>) = states.subscribeForViews {
         textInput.setText(counter.toString())
     }
 }
