@@ -10,7 +10,7 @@ abstract class MarbleViewModel<S : MarbleState>(defaultState: S) {
     private val statesRelay: BehaviorRelay<S> = BehaviorRelay.createDefault(defaultState)
     val states: Observable<S> = statesRelay.hide()
 
-    protected fun update(updater: (S) -> S) {
+    protected fun updateState(updater: (S) -> S) {
         statesRelay.accept(updater(statesRelay.value))
     }
 }
