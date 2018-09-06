@@ -56,13 +56,13 @@ abstract class MarbleFragment<M : MarbleViewModel<S>, S : MarbleState> : Fragmen
 
     protected open fun onBindViews() {}
 
-    protected fun Observable<S>.subscribeFromViewModel(onValue: S.() -> Unit): Disposable = subscribe {
+    protected fun Observable<S>.subscribeForViews(onValue: S.() -> Unit): Disposable = subscribe {
         isUpdatingViewRelay.accept(true)
         onValue(it)
         isUpdatingViewRelay.accept(false)
     }
 
-    protected fun <T> Observable<T>.subscribeToViewModel(onValue: M.(event: T) -> Unit): Disposable =
+    protected fun <T> Observable<T>.subscribeForViewModel(onValue: M.(event: T) -> Unit): Disposable =
             this.withLatestFrom(isUpdatingViewRelay) { event, isUpdatingView -> Pair(event, isUpdatingView) }
                     .filter { !it.second }
                     .map { it.first }

@@ -21,12 +21,12 @@ class CounterFragment : MarbleFragment<CounterViewModel, CounterViewModel.State>
     }
 
     override fun onBindViews() {
-        decreaseButton.clicks().subscribeToViewModel { decrease() }
-        increaseButton.clicks().subscribeToViewModel { increase() }
-        textInput.textChanges().subscribeToViewModel { setValue(it.toString()) }
+        decreaseButton.clicks().subscribeForViewModel { decrease() }
+        increaseButton.clicks().subscribeForViewModel { increase() }
+        textInput.textChanges().subscribeForViewModel { setValue(it.toString()) }
     }
 
-    override fun onBindStates(states: Observable<CounterViewModel.State>): Disposable = states.subscribeFromViewModel {
+    override fun onBindStates(states: Observable<CounterViewModel.State>): Disposable = states.subscribeForViews {
         textInput.setText(counter.toString())
     }
 }
