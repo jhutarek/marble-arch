@@ -20,10 +20,10 @@ class CounterFragment : MarbleFragment<CounterViewModel, CounterViewModel.State>
         MainApplication.getInjector(context).inject(this)
     }
 
-    override fun onBindViews(viewModel: CounterViewModel) {
-        decrease.clicks().safe().subscribe { viewModel.decrease() }
-        increase.clicks().safe().subscribe { viewModel.increase() }
-        counter.textChanges().safe().subscribe { viewModel.setValue(it.toString()) }
+    override fun onBindViews() {
+        decrease.clicks().subscribeToViewModel { decrease() }
+        increase.clicks().subscribeToViewModel { increase() }
+        counter.textChanges().subscribeToViewModel { setValue(it.toString()) }
     }
 
     override fun onBindStates(states: Observable<CounterViewModel.State>): Disposable = states.safeSubscribe {

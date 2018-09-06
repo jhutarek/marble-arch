@@ -30,7 +30,7 @@ abstract class MarbleFragment<M : MarbleViewModel<S>, S : MarbleState> : Fragmen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        onBindViews(__privateViewModel)
+        onBindViews()
     }
 
     @CallSuper
@@ -54,7 +54,7 @@ abstract class MarbleFragment<M : MarbleViewModel<S>, S : MarbleState> : Fragmen
 
     protected open fun onBindStates(states: Observable<S>): Disposable = Observable.never<Unit>().subscribe()
 
-    protected open fun onBindViews(viewModel: M) {}
+    protected open fun onBindViews() {}
 
     protected fun Observable<S>.safeSubscribe(onValue: (S) -> Unit): Disposable = subscribe {
         isUpdatingViewRelay.accept(true)
@@ -62,8 +62,9 @@ abstract class MarbleFragment<M : MarbleViewModel<S>, S : MarbleState> : Fragmen
         isUpdatingViewRelay.accept(false)
     }
 
-    protected fun <T> Observable<T>.safe(): Observable<T> =
+    protected fun <T> Observable<T>.subscribeToViewModel(onValue: M.(event: T) -> Unit): Disposable =
             this.withLatestFrom(isUpdatingViewRelay) { event, isUpdatingView -> Pair(event, isUpdatingView) }
                     .filter { !it.second }
                     .map { it.first }
+                    .subscribe { onValue(__privateViewModel, it) }
 }
