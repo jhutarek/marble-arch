@@ -5,7 +5,7 @@ import cz.jhutarek.marble.arch.mvvm.model.MarbleState
 import io.reactivex.Observable
 
 // TODO test
-abstract class MarbleViewModel<S : MarbleState>(private val defaultState: S) {
+abstract class MarbleViewModel<S : MarbleState>(defaultState: S) {
 
     private val statesRelay: BehaviorRelay<S> = BehaviorRelay.createDefault(defaultState)
     val states: Observable<S> = statesRelay.hide()
