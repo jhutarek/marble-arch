@@ -2,6 +2,7 @@ package cz.jhutarek.marble.example
 
 import android.os.Bundle
 import com.jakewharton.rxbinding2.view.clicks
+import com.jakewharton.rxbinding2.widget.textChanges
 import cz.jhutarek.marble.arch.mvvm.ui.MarbleFragment
 import cz.jhutarek.marblearch.R
 import io.reactivex.Observable
@@ -22,9 +23,10 @@ class CounterFragment : MarbleFragment<CounterViewModel, CounterViewModel.State>
     override fun onBindViews(viewModel: CounterViewModel) {
         decrease.clicks().whenNotUpdatingView().subscribe { viewModel.decrease() }
         increase.clicks().whenNotUpdatingView().subscribe { viewModel.increase() }
+        counter.textChanges().whenNotUpdatingView().subscribe { viewModel.setValue(it.toString()) }
     }
 
     override fun onBindStates(states: Observable<CounterViewModel.State>): Disposable = states.subscribeWithViewUpdatesDisabled {
-        counter.text = it.counter.toString()
+        counter.setText(it.counter.toString())
     }
 }

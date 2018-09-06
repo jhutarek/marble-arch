@@ -15,7 +15,7 @@
         android:textAppearance="?textAppearanceHeadline4"
         />
 
-    <TextView
+    <EditText
         android:id="@+id/counter"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

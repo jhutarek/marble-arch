@@ -10,6 +10,10 @@ class CounterViewModel @Inject constructor() : MarbleViewModel<CounterViewModel.
 
     data class State(val counter: Int = 0) : MarbleState
 
+    fun setValue(value: String) {
+        update { it.copy(counter = value.toIntOrNull() ?: 0) }
+    }
+
     fun increase() {
         update { it.copy(counter = it.counter + 1) }
     }
