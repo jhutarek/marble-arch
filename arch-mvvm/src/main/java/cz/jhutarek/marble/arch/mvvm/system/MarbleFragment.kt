@@ -18,7 +18,7 @@ import javax.inject.Inject
 // TODO test
 abstract class MarbleFragment<M : MarbleViewModel<S>, S : MarbleState> : Fragment() {
 
-    @Inject internal lateinit var __privateViewModel: M
+    @Inject internal lateinit var viewModel: M
     protected abstract val layoutResId: Int
     private var statesDisposable: Disposable? = null
     private val isUpdatingViewRelay = BehaviorRelay.createDefault(false)
@@ -38,7 +38,7 @@ abstract class MarbleFragment<M : MarbleViewModel<S>, S : MarbleState> : Fragmen
         super.onStart()
 
         statesDisposable = onBindStates(
-                __privateViewModel.states
+                viewModel.states
                         .distinctUntilChanged()
                         .observeOn(mainThread())
         )
@@ -66,5 +66,5 @@ abstract class MarbleFragment<M : MarbleViewModel<S>, S : MarbleState> : Fragmen
             this.withLatestFrom(isUpdatingViewRelay) { event, isUpdatingView -> Pair(event, isUpdatingView) }
                     .filter { !it.second }
                     .map { it.first }
-                    .subscribe { onValue(__privateViewModel, it) }
+                    .subscribe { onValue(viewModel, it) }
 }
