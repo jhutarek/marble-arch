@@ -3,7 +3,7 @@ package cz.jhutarek.marble.example
 import android.app.Application
 import android.content.Context
 import com.squareup.leakcanary.LeakCanary
-import cz.jhutarek.marble.arch.mvvm.ui.MarbleMvvm
+import cz.jhutarek.marble.arch.mvvm.system.MarbleMvvm
 import dagger.Component
 import javax.inject.Singleton
 

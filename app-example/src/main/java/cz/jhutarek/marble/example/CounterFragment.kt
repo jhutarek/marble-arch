@@ -3,7 +3,7 @@ package cz.jhutarek.marble.example
 import android.os.Bundle
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
-import cz.jhutarek.marble.arch.mvvm.ui.MarbleFragment
+import cz.jhutarek.marble.arch.mvvm.system.MarbleFragment
 import cz.jhutarek.marblearch.R
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.counter_fragment.*

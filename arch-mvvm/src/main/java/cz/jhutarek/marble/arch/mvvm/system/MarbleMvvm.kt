@@ -1,4 +1,4 @@
-package cz.jhutarek.marble.arch.mvvm.ui
+package cz.jhutarek.marble.arch.mvvm.system
 
 import android.os.Looper.getMainLooper
 import io.reactivex.android.plugins.RxAndroidPlugins

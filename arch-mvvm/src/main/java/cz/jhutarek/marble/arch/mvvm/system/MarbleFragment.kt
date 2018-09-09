@@ -1,4 +1,4 @@
-package cz.jhutarek.marble.arch.mvvm.ui
+package cz.jhutarek.marble.arch.mvvm.system
 
 import android.os.Bundle
 import android.view.LayoutInflater
