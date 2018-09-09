@@ -22,7 +22,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':arch-mvvm')
     implementation project(':arch-usecase')
 
