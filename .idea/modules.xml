@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app-example/app-example.iml" filepath="$PROJECT_DIR$/app-example/app-example.iml" />
       <module fileurl="file://$PROJECT_DIR$/arch-mvvm/arch-mvvm.iml" filepath="$PROJECT_DIR$/arch-mvvm/arch-mvvm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/arch-usecase/arch-usecase.iml" filepath="$PROJECT_DIR$/arch-usecase/arch-usecase.iml" />
       <module fileurl="file://$PROJECT_DIR$/marble-arch.iml" filepath="$PROJECT_DIR$/marble-arch.iml" />
     </modules>
   </component>
