@@ -1,6 +1,7 @@
 package cz.jhutarek.marble.arch.repository.data
 
 import cz.jhutarek.marble.arch.repository.domain.Repository
+import cz.jhutarek.marble.arch.repository.model.Data
 import io.reactivex.Observable
 
 // TODO support different keys
@@ -10,7 +11,7 @@ abstract class BaseRepository<D : Any>(
         private vararg val caches: Cache<D>
 ) : Repository<D> {
 
-    final override fun observe(): Observable<D> {
+    final override fun observe(): Observable<Data<D>> {
         TODO()
     }
 

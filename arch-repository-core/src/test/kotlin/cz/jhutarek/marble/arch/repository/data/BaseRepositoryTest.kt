@@ -1,5 +1,6 @@
 package cz.jhutarek.marble.arch.repository.data
 
+import cz.jhutarek.marble.arch.repository.model.Data
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import org.junit.jupiter.api.Test
@@ -25,10 +26,10 @@ internal class BaseRepositoryTest {
     @Test
     fun tmp() {
         val cache1 = Cache(Maybe.empty<String>(), "1")
-        val cache2 = Cache(Maybe.just("11111"), "2")
-        val cache3 = Cache(Maybe.error(IllegalAccessException()), "3")
-        val cache4 = Cache(Maybe.just("XXX"), "4")
-        val source = Source(Maybe.just("aaa"))
+        val cache2 = Cache(Maybe.empty<String>(), "2")
+        val cache3 = Cache(Maybe.empty<String>(), "3")
+        val cache4 = Cache(Maybe.empty<String>(), "4")
+        val source = Source(Maybe.empty<String>())
         val sources = arrayOf(cache1, cache2, cache3, cache4, source)
 
         fun storeInHigherCaches(sourceIndex: Int, value: String): Maybe<String> {
@@ -45,12 +46,10 @@ internal class BaseRepositoryTest {
         Maybe.concat(sources.mapIndexed { i, it -> it.load().map { i to it } })
                 .firstElement()
                 .flatMap { storeInHigherCaches(it.first, it.second) }
-                .subscribe({ it ->
-                    println("Success: $it")
-                }, {
-                    println("Error: $it")
-                }, {
-                    println("Complete") // TODO map errors and completions to data
-                })
+                .map { Data.Loaded(it) }
+                .cast(Data::class.java)
+                .onErrorReturn { Data.Error(it) }
+                .toSingle(Data.Empty)
+                .subscribe { it -> println("Result: $it") }
     }
 }
