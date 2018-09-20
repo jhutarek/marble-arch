@@ -3,7 +3,7 @@ package cz.jhutarek.marble.example
 import android.app.Application
 import android.content.Context
 import com.squareup.leakcanary.LeakCanary
-import cz.jhutarek.marble.arch.mvvm.system.MarbleMvvm
+import cz.jhutarek.marble.arch.mvvm.system.Mvvm
 import dagger.Component
 import javax.inject.Singleton
 
@@ -29,7 +29,7 @@ class MainApplication : Application() {
         if (LeakCanary.isInAnalyzerProcess(this)) return
         LeakCanary.install(this)
 
-        MarbleMvvm.initialize()
+        Mvvm.initialize()
 
         component = DaggerMainApplication_MainComponent.create()
     }

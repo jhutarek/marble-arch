@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
 import com.jakewharton.rxrelay2.BehaviorRelay
-import cz.jhutarek.marble.arch.mvvm.model.MarbleState
-import cz.jhutarek.marble.arch.mvvm.presentation.MarbleViewModel
+import cz.jhutarek.marble.arch.mvvm.model.State
+import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.disposables.Disposable
@@ -16,7 +16,7 @@ import io.reactivex.rxkotlin.withLatestFrom
 import javax.inject.Inject
 
 // TODO test
-abstract class MarbleFragment<M : MarbleViewModel<S>, S : MarbleState> : Fragment() {
+abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
 
     @Inject internal lateinit var viewModel: M
     protected abstract val layoutResId: Int

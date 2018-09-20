@@ -3,7 +3,7 @@ package cz.jhutarek.marble.arch.repository.data
 import io.reactivex.Completable
 
 // TODO support different keys
-interface MarbleCache<D : Any> : MarbleSource<D> {
+interface Cache<D : Any> : Source<D> {
 
     fun store(data: D): Completable
 

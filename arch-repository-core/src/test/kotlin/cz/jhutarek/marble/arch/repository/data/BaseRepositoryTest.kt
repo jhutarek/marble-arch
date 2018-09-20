@@ -4,9 +4,9 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import org.junit.jupiter.api.Test
 
-internal class BaseMarbleRepositoryTest {
+internal class BaseRepositoryTest {
 
-    private class Cache(private val maybe: Maybe<String>, private val tag: String) : MarbleCache<String> {
+    private class Cache(private val maybe: Maybe<String>, private val tag: String) : cz.jhutarek.marble.arch.repository.data.Cache<String> {
         override fun store(data: String): Completable = Completable.fromCallable { println("Stored $data in $this") }.doOnSubscribe { println("Subscribed to store in $this") }
 
         override fun clear(): Completable {
@@ -18,7 +18,7 @@ internal class BaseMarbleRepositoryTest {
         override fun toString() = "cache $tag"
     }
 
-    private class Source(private val maybe: Maybe<String>) : MarbleSource<String> {
+    private class Source(private val maybe: Maybe<String>) : cz.jhutarek.marble.arch.repository.data.Source<String> {
         override fun load(): Maybe<String> = maybe.doOnSubscribe { println("Subscribed to load in source") }
     }
 
@@ -35,7 +35,7 @@ internal class BaseMarbleRepositoryTest {
             return Completable.concat(
                     sources
                             .take(sourceIndex)
-                            .filterIsInstance<MarbleCache<String>>()
+                            .filterIsInstance<cz.jhutarek.marble.arch.repository.data.Cache<String>>()
                             .map { it.store(value) }
             )
                     .toSingle { value }

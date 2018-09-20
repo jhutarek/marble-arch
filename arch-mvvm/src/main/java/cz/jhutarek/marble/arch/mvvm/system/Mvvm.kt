@@ -4,7 +4,7 @@ import android.os.Looper.getMainLooper
 import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.android.schedulers.AndroidSchedulers
 
-object MarbleMvvm {
+object Mvvm {
 
     fun initialize() {
         // TODO confirm that this is working: https://medium.com/@sweers/rxandroids-new-async-api-4ab5b3ad3e93
