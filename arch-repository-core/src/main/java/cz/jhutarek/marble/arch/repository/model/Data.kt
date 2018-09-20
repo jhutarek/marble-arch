@@ -1,6 +1,11 @@
 package cz.jhutarek.marble.arch.repository.model
 
 sealed class Data<out T : Any> {
+
+    object Loading : Data<Nothing>() {
+        override fun toString(): String = "Loading"
+    }
+
     object Empty : Data<Nothing>() {
         override fun toString(): String = "Empty"
     }

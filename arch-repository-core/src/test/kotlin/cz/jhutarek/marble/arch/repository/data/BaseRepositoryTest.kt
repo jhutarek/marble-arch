@@ -27,7 +27,7 @@ internal class BaseRepositoryTest {
     fun tmp() {
         val cache1 = Cache(Maybe.empty<String>(), "1")
         val cache2 = Cache(Maybe.empty<String>(), "2")
-        val cache3 = Cache(Maybe.empty<String>(), "3")
+        val cache3 = Cache(Maybe.just("AAA"), "3")
         val cache4 = Cache(Maybe.empty<String>(), "4")
         val source = Source(Maybe.empty<String>())
         val sources = arrayOf(cache1, cache2, cache3, cache4, source)
@@ -50,6 +50,8 @@ internal class BaseRepositoryTest {
                 .cast(Data::class.java)
                 .onErrorReturn { Data.Error(it) }
                 .toSingle(Data.Empty)
-                .subscribe { it -> println("Result: $it") }
+                .toObservable()
+                .startWith(Data.Loading)
+                .subscribe { it -> println("=> $it") }
     }
 }
