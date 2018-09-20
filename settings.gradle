@@ -1,1 +1,1 @@
-include ':app-example', ':arch-mvvm', ':arch-usecase'
+include ':app-example', ':arch-mvvm', ':arch-usecase', ':arch-repository-core'
