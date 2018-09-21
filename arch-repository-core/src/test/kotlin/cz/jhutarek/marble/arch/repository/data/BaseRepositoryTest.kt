@@ -34,7 +34,7 @@ internal class BaseRepositoryTest {
 
     @ParameterizedTest
     @MethodSource("subscribeToSourcesUntilFirstValueData")
-    fun `repository should subscribe to sources in order until the first of them returns value`(expectedSubscriptions: Int, sourceResults: List<SourceResult>) {
+    fun `repository should subscribe to sources in order until the first of them returns value`(expectedSubscribedSources: Int, sourceResults: List<SourceResult>) {
         val sourceResultSpy = sourceResults
                 .last()
                 .createMaybeSpy()
@@ -54,8 +54,8 @@ internal class BaseRepositoryTest {
 
         Repository(sourceMock, *cacheMocks.toTypedArray()).request()
 
-        assertThat(allResultSpies.take(expectedSubscriptions)).allSatisfy { verify(it).subscribe(any<MaybeObserver<String>>()) }
-        assertThat(allResultSpies.drop(expectedSubscriptions)).allSatisfy { verifyZeroInteractions(it) }
+        assertThat(allResultSpies.take(expectedSubscribedSources)).allSatisfy { verify(it).subscribe(any<MaybeObserver<String>>()) }
+        assertThat(allResultSpies.drop(expectedSubscribedSources)).allSatisfy { verifyZeroInteractions(it) }
     }
 
     companion object {
