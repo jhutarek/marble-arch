@@ -1,57 +1,191 @@
 package cz.jhutarek.marble.arch.repository.data
 
-import cz.jhutarek.marble.arch.repository.model.Data
-import io.reactivex.Completable
+import com.nhaarman.mockitokotlin2.*
+import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.SourceResult.*
 import io.reactivex.Maybe
-import org.junit.jupiter.api.Test
+import io.reactivex.MaybeObserver
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments.arguments
+import org.junit.jupiter.params.provider.MethodSource
+import org.junit.jupiter.params.provider.ValueSource
 
 internal class BaseRepositoryTest {
 
-    private class Cache(private val maybe: Maybe<String>, private val tag: String) : cz.jhutarek.marble.arch.repository.data.Cache<String> {
-        override fun store(data: String): Completable = Completable.fromCallable { println("Stored $data in $this") }.doOnSubscribe { println("Subscribed to store in $this") }
+    private class Repository(source: Source<String>, vararg caches: Cache<String>) : BaseRepository<String>(source, *caches)
 
-        override fun clear(): Completable {
-            TODO()
+    internal enum class SourceResult(val createMaybeSpy: () -> Maybe<String>) {
+        EMPTY({ spy(Maybe.empty()) }),
+        VALUE({ spy(Maybe.just("anyValue")) }),
+        ERROR({ spy(Maybe.error(IllegalStateException("anyException"))) })
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = [1, 2, 3, 10])
+    fun `repository should request each source when requested`(sourceCount: Int) {
+        val source = mock<Source<String>>()
+        val caches = Array<Cache<String>>(sourceCount - 1) { mock() }
+
+        Repository(source, *caches).request()
+
+        assertThat(caches).allSatisfy { verify(it).request() }
+        verify(source).request()
+    }
+
+    @ParameterizedTest
+    @MethodSource("subscribeToSourcesUntilFirstValueData")
+    fun `repository should subscribe to sources in order until the first of them returns value`(expectedSubscriptions: Int, sourceResults: List<SourceResult>) {
+        val sourceResultSpy = sourceResults
+                .last()
+                .createMaybeSpy()
+        val sourceMock = mock<Source<String>> {
+            on { request() } doReturn sourceResultSpy
+        }
+        val cacheResultSpies = sourceResults
+                .dropLast(1)
+                .map { it.createMaybeSpy() }
+        val cacheMocks = cacheResultSpies
+                .map { resultSpy ->
+                    mock<Cache<String>> {
+                        on { request() } doReturn resultSpy
+                    }
+                }
+        val allResultSpies = cacheResultSpies + sourceResultSpy
+
+        Repository(sourceMock, *cacheMocks.toTypedArray()).request()
+
+        assertThat(allResultSpies.take(expectedSubscriptions)).allSatisfy { verify(it).subscribe(any<MaybeObserver<String>>()) }
+        assertThat(allResultSpies.drop(expectedSubscriptions)).allSatisfy { verifyZeroInteractions(it) }
+    }
+
+    companion object {
+        @JvmStatic
+        fun subscribeToSourcesUntilFirstValueData() = arrayOf(
+                arguments(1, listOf(EMPTY)),
+                arguments(1, listOf(VALUE)),
+                arguments(1, listOf(ERROR)),
+                arguments(1, listOf(VALUE, EMPTY)),
+                arguments(1, listOf(VALUE, VALUE)),
+                arguments(1, listOf(VALUE, VALUE, VALUE, EMPTY, ERROR, VALUE)),
+                arguments(2, listOf(EMPTY, EMPTY)),
+                arguments(2, listOf(EMPTY, VALUE)),
+                arguments(2, listOf(EMPTY, VALUE, VALUE, VALUE)),
+                arguments(5, listOf(EMPTY, EMPTY, EMPTY, EMPTY, VALUE, VALUE, ERROR))
+        )
+    }
+
+    /*@ParameterizedTest
+    @MethodSource("subscribeUntilFirstValueData")
+    fun `repository should subscribe to sources in order until the first of them returns value`(expectedSubscriptions: Int, caches: List<Pair<Cache<String>, Maybe<String>>>, source: Pair<Source<String>, Maybe<String>>) {
+        val allSources = listOf(source) + caches
+        val repository = Repository(source.first, *caches.map { it.first }.toTypedArray())
+
+        repository.request()
+
+        assertThat(allSources.take(expectedSubscriptions)).allSatisfy { verify(it.second).subscribe(any<MaybeObserver<String>>()) }
+        assertThat(allSources.drop(expectedSubscriptions)).allSatisfy { verifyZeroInteractions(it.second) }
+    }*/
+
+/*
+    private class Repository(source: Source<String>, vararg caches: Cache<String>) : BaseRepository<String>(source, *caches)
+
+    private val anyData = "anyData"
+    private val anySource = mock<Source<String>>()
+
+    private lateinit var repository: Repository
+    private lateinit var testObserver: TestObserver<Data<String>>
+
+    @BeforeEach
+    fun init() {
+        reset(anySource)
+    }
+
+    @Nested
+    @TestInstance(PER_CLASS)
+    @DisplayName("given no caches are injected, ")
+    internal inner class NoCachesInjected {
+        private val anyException = IllegalStateException("anyException")
+
+        @BeforeEach
+        fun init() {
+            repository = Repository(anySource)
+            testObserver = repository.observe().test()
         }
 
-        override fun request(): Maybe<String> = maybe.doOnSubscribe { println("Subscribed to request in $this") }
+        @Test
+        fun `when observing value from repository, source should be requested and subscribed to`() {
+            val anySourceMaybe = spy(Maybe.just(anyData))
+            whenever(anySource.request()).thenReturn(anySourceMaybe)
 
-        override fun toString() = "cache $tag"
-    }
+            repository.request()
 
-    private class Source(private val maybe: Maybe<String>) : cz.jhutarek.marble.arch.repository.data.Source<String> {
-        override fun request(): Maybe<String> = maybe.doOnSubscribe { println("Subscribed to request in source") }
-    }
-
-    @Test
-    fun tmp() {
-        val cache1 = Cache(Maybe.empty<String>(), "1")
-        val cache2 = Cache(Maybe.empty<String>(), "2")
-        val cache3 = Cache(Maybe.just("AAA"), "3")
-        val cache4 = Cache(Maybe.empty<String>(), "4")
-        val source = Source(Maybe.empty<String>())
-        val sources = arrayOf(cache1, cache2, cache3, cache4, source)
-
-        fun storeInHigherCaches(sourceIndex: Int, value: String): Maybe<String> {
-            return Completable.concat(
-                    sources
-                            .take(sourceIndex)
-                            .filterIsInstance<cz.jhutarek.marble.arch.repository.data.Cache<String>>()
-                            .map { it.store(value) }
-            )
-                    .toSingle { value }
-                    .toMaybe()
+            verify(anySource).request()
+            verify(anySourceMaybe).subscribe(any<MaybeObserver<String>>())
         }
 
-        Maybe.concat(sources.mapIndexed { i, it -> it.request().map { i to it } })
-                .firstElement()
-                .flatMap { storeInHigherCaches(it.first, it.second) }
-                .map { Data.Loaded(it) }
-                .cast(Data::class.java)
-                .onErrorReturn { Data.Error(it) }
-                .toSingle(Data.Empty)
-                .toObservable()
-                .startWith(Data.Loading)
-                .subscribe { it -> println("=> $it") }
+        @Test
+        fun `when source emits value, repository should emit loading and then value`() {
+            assertRepositoryEmitsLoadingAndThen(Data.Loaded(anyData), Maybe.just(anyData))
+        }
+
+        @Test
+        fun `when source is empty, repository should emit loading and then empty`() {
+            assertRepositoryEmitsLoadingAndThen(Data.Empty, Maybe.empty())
+        }
+
+        @Test
+        fun `when source emits error, repository should emit loading and then error`() {
+            assertRepositoryEmitsLoadingAndThen(Data.Error(anyException), Maybe.error(anyException))
+        }
+
+        private fun assertRepositoryEmitsLoadingAndThen(data: Data<String>, sourceRequestResult: Maybe<String>) {
+            whenever(anySource.request()).thenReturn(sourceRequestResult)
+
+            repository.request()
+
+            testObserver.assertValues(Data.Loading, data)
+        }
     }
+
+    @Nested
+    @TestInstance(PER_CLASS)
+    @DisplayName("given multiple caches are injected, ")
+    internal inner class MultipleCachesInjected {
+        private val anyCache1 = mock<Cache<String>>()
+        private val anyCache2 = mock<Cache<String>>()
+
+        @BeforeEach
+        fun init() {
+            reset(anyCache1, anyCache2)
+            repository = Repository(anySource, anyCache1, anyCache2)
+            testObserver = repository.observe().test()
+        }
+
+        @Test
+        fun `when observing value from repository and only first cache emits value, other sources should be requested, but not subscribed to`() {
+            val anyCache1Maybe = spy(Maybe.just(anyData))
+            val anyCache2Maybe = spy(Maybe.empty<String>())
+            val anySourceMaybe = spy(Maybe.empty<String>())
+            whenever(anyCache1.request()).thenReturn(anyCache1Maybe)
+            whenever(anyCache2.request()).thenReturn(anyCache2Maybe)
+            whenever(anySource.request()).thenReturn(anySourceMaybe)
+
+            repository.request()
+
+            verify(anyCache1).request()
+            verify(anyCache2).request()
+            verify(anySource).request()
+            verify(anyCache1Maybe).subscribe(any<MaybeObserver<String>>())
+            verifyZeroInteractions(anyCache2Maybe, anySourceMaybe)
+        }
+
+        @Test
+        fun `when first cache emits value, repository should emit loading and then value`() {
+            whenever(anyCache1.request()).thenReturn(Maybe.just(anyData))
+
+            repository.request()
+
+            testObserver.assertValues(Data.Loading, Data.Loaded(anyData))
+        }
+    }*/
 }
