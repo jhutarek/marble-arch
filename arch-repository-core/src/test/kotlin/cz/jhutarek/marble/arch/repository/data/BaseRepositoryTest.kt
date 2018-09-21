@@ -24,12 +24,11 @@ internal class BaseRepositoryTest {
     @ValueSource(ints = [1, 2, 3, 10])
     fun `repository should request each source when requested`(sourceCount: Int) {
         val source = mock<Source<String>>()
-        val caches = Array<Cache<String>>(sourceCount - 1) { mock() }
+        val caches = List<Cache<String>>(sourceCount - 1) { mock() }
 
-        Repository(source, *caches).request()
+        Repository(source, *caches.toTypedArray()).request()
 
-        assertThat(caches).allSatisfy { verify(it).request() }
-        verify(source).request()
+        assertThat(caches + source).allSatisfy { verify(it).request() }
     }
 
     @ParameterizedTest
