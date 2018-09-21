@@ -14,13 +14,13 @@ internal class BaseRepositoryTest {
             TODO()
         }
 
-        override fun load(): Maybe<String> = maybe.doOnSubscribe { println("Subscribed to load in $this") }
+        override fun request(): Maybe<String> = maybe.doOnSubscribe { println("Subscribed to request in $this") }
 
         override fun toString() = "cache $tag"
     }
 
     private class Source(private val maybe: Maybe<String>) : cz.jhutarek.marble.arch.repository.data.Source<String> {
-        override fun load(): Maybe<String> = maybe.doOnSubscribe { println("Subscribed to load in source") }
+        override fun request(): Maybe<String> = maybe.doOnSubscribe { println("Subscribed to request in source") }
     }
 
     @Test
@@ -43,7 +43,7 @@ internal class BaseRepositoryTest {
                     .toMaybe()
         }
 
-        Maybe.concat(sources.mapIndexed { i, it -> it.load().map { i to it } })
+        Maybe.concat(sources.mapIndexed { i, it -> it.request().map { i to it } })
                 .firstElement()
                 .flatMap { storeInHigherCaches(it.first, it.second) }
                 .map { Data.Loaded(it) }

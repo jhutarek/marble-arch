@@ -5,5 +5,5 @@ import io.reactivex.Maybe
 // TODO support different keys
 interface Source<D : Any> {
 
-    fun load(): Maybe<D>
+    fun request(): Maybe<D>
 }
