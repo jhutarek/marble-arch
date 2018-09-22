@@ -214,5 +214,15 @@ internal class BaseRepositoryTest {
         )
     })
 
-    // TODO test cases when store returns Maybe.error
+    @Test
+    fun `repository should emit error if cache emits error when storing value`() {
+        MockRepositoryBuilder(listOf(Empty(), Value())).run {
+            whenever(cacheMocks[0].store(any())).thenReturn(Completable.error(EXPECTED_ERROR))
+            val testObserver = repository.observe().test()
+
+            repository.request()
+
+            testObserver.assertValueAt(1, Data.Error(EXPECTED_ERROR))
+        }
+    }
 }
