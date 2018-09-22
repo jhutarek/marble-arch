@@ -36,7 +36,7 @@ abstract class BaseRepository<D : Any>(
                 .subscribe(relay)
     }
 
-    private fun storeValueInCaches(indexedResult: IndexedResult<D>): Maybe<D> = Completable.concat(
+    private fun storeValueInCaches(indexedResult: IndexedResult<D>): Maybe<D> = Completable.merge(
             allSources
                     .take(indexedResult.index)
                     .filterIsInstance<Cache<D>>()
