@@ -94,7 +94,7 @@ internal class BaseRepositoryTest {
 
     @ParameterizedTest
     @ArgumentsSource(SubscribeToSourcesUntilFirstValueProvider::class)
-    fun `repository should subscribe to sources in order until the first of them returns value`(expectedSubscribedSources: Int, allResults: List<SourceResult>) {
+    fun `repository should subscribe to sources until the first of them returns value`(expectedSubscribedSources: Int, allResults: List<SourceResult>) {
         MockRepositoryBuilder(allResults).run {
             repository.request()
 
@@ -191,7 +191,7 @@ internal class BaseRepositoryTest {
 
     @ParameterizedTest
     @ArgumentsSource(StoreValueInHigherCachesProvider::class)
-    fun `should store value loaded from lower source in all higher caches`(expectedStoreCount: Int, allResults: List<SourceResult>) {
+    fun `repository should store value loaded from lower source in all higher caches`(expectedStoreCount: Int, allResults: List<SourceResult>) {
         MockRepositoryBuilder(allResults).run {
             repository.request()
 
