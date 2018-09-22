@@ -2,25 +2,33 @@ package cz.jhutarek.marble.arch.repository.data
 
 import com.nhaarman.mockitokotlin2.*
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.*
-import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Any
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Value.Companion.EXPECTED
 import cz.jhutarek.marble.arch.repository.model.Data
 import io.reactivex.Maybe
 import io.reactivex.MaybeObserver
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.Arguments.arguments
-import org.junit.jupiter.params.provider.MethodSource
+import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.provider.ArgumentsSource
 import org.junit.jupiter.params.provider.ValueSource
+import java.util.stream.Stream
 
 internal class BaseRepositoryTest {
 
-    internal class MockRepositoryBuilder(allResults: List<SourceResult> = listOf(Any())) {
+    // TODO extract to separate file
+    abstract class BaseArgumentsProvider(private val provider: () -> Stream<out Arguments>) : ArgumentsProvider {
+        final override fun provideArguments(context: ExtensionContext): Stream<out Arguments> = provider()
+    }
+
+    internal class MockRepositoryBuilder(allResults: List<SourceResult> = listOf(Whatever())) {
         internal sealed class SourceResult {
             abstract val maybeSpy: Maybe<String>
 
-            class Any : SourceResult() {
+            class Whatever : SourceResult() {
                 override val maybeSpy: Maybe<String> = spy(Maybe.empty())
                 override fun toString() = "any"
             }
@@ -64,7 +72,7 @@ internal class BaseRepositoryTest {
     @ParameterizedTest
     @ValueSource(ints = [1, 2, 3, 10])
     fun `repository should request each source when requested`(sourceCount: Int) {
-        MockRepositoryBuilder(List(sourceCount) { Any() }).run {
+        MockRepositoryBuilder(List(sourceCount) { Whatever() }).run {
             repository.request()
 
             assertThat(allMocks).allSatisfy { verify(it).request() }
@@ -72,7 +80,7 @@ internal class BaseRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("subscribeToSourcesUntilFirstValueData")
+    @ArgumentsSource(SubscribeToSourcesUntilFirstValueProvider::class)
     fun `repository should subscribe to sources in order until the first of them returns value`(expectedSubscribedSources: Int, allResults: List<MockRepositoryBuilder.SourceResult>) {
         MockRepositoryBuilder(allResults).run {
             repository.request()
@@ -81,6 +89,21 @@ internal class BaseRepositoryTest {
             assertThat(allResultSpies.drop(expectedSubscribedSources)).allSatisfy { verifyZeroInteractions(it) }
         }
     }
+
+    internal class SubscribeToSourcesUntilFirstValueProvider : BaseArgumentsProvider({
+        Stream.of(
+                arguments(1, listOf(Empty())),
+                arguments(1, listOf(Value())),
+                arguments(1, listOf(Error())),
+                arguments(1, listOf(Value(), Empty())),
+                arguments(1, listOf(Value(), Value())),
+                arguments(1, listOf(Value(), Value(), Value(), Empty(), Error(), Value())),
+                arguments(2, listOf(Empty(), Empty())),
+                arguments(2, listOf(Empty(), Value())),
+                arguments(2, listOf(Empty(), Value(), Value(), Value())),
+                arguments(5, listOf(Empty(), Empty(), Empty(), Empty(), Value(), Value(), Error()))
+        )
+    })
 
     @Test
     fun `repository should emit loading first when requested`() {
@@ -94,7 +117,7 @@ internal class BaseRepositoryTest {
     }
 
     @ParameterizedTest
-    @MethodSource("valueFromFirstNonEmptySourceData")
+    @ArgumentsSource(ValueFromFirstNonEmptySourceProvider::class)
     fun `repository should emit value from first source that is not empty`(allResults: List<MockRepositoryBuilder.SourceResult>) {
         MockRepositoryBuilder(allResults).run {
             val testObserver = repository.observe().test()
@@ -105,23 +128,8 @@ internal class BaseRepositoryTest {
         }
     }
 
-    companion object {
-        @JvmStatic
-        fun subscribeToSourcesUntilFirstValueData() = arrayOf(
-                arguments(1, listOf(Empty())),
-                arguments(1, listOf(Value())),
-                arguments(1, listOf(Error())),
-                arguments(1, listOf(Value(), Empty())),
-                arguments(1, listOf(Value(), Value())),
-                arguments(1, listOf(Value(), Value(), Value(), Empty(), Error(), Value())),
-                arguments(2, listOf(Empty(), Empty())),
-                arguments(2, listOf(Empty(), Value())),
-                arguments(2, listOf(Empty(), Value(), Value(), Value())),
-                arguments(5, listOf(Empty(), Empty(), Empty(), Empty(), Value(), Value(), Error()))
-        )
-
-        @JvmStatic
-        fun valueFromFirstNonEmptySourceData() = arrayOf(
+    internal class ValueFromFirstNonEmptySourceProvider : BaseArgumentsProvider({
+        Stream.of(
                 listOf(Value(EXPECTED)),
                 listOf(Value(EXPECTED), Empty()),
                 listOf(Value(EXPECTED), Value()),
@@ -129,8 +137,8 @@ internal class BaseRepositoryTest {
                 listOf(Empty(), Value(EXPECTED)),
                 listOf(Empty(), Value(EXPECTED), Value(), Value()),
                 listOf(Empty(), Empty(), Empty(), Empty(), Value(EXPECTED), Value(), Error())
-        )
-    }
+        ).map { arguments(it) }
+    })
 
     /*@ParameterizedTest
     @MethodSource("subscribeUntilFirstValueData")
