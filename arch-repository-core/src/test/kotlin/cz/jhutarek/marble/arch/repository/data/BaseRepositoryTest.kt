@@ -3,6 +3,7 @@ package cz.jhutarek.marble.arch.repository.data
 import com.nhaarman.mockitokotlin2.*
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.*
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Any
+import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Value.Companion.EXPECTED
 import cz.jhutarek.marble.arch.repository.model.Data
 import io.reactivex.Maybe
 import io.reactivex.MaybeObserver
@@ -29,12 +30,17 @@ internal class BaseRepositoryTest {
                 override fun toString() = "empty"
             }
 
-            data class Value(private val value: String = "anyValue") : SourceResult() {
+            data class Value(private val value: String = VALUE) : SourceResult() {
+                companion object {
+                    const val VALUE = "value"
+                    const val EXPECTED = "expected"
+                }
+
                 override val maybeSpy: Maybe<String> = spy(Maybe.just(value))
                 override fun toString() = value
             }
 
-            data class Error(private val error: Throwable = IllegalStateException("anyError")) : SourceResult() {
+            data class Error(private val error: Throwable = IllegalStateException("error")) : SourceResult() {
                 override val maybeSpy: Maybe<String> = spy(Maybe.error(error))
                 override fun toString() = "$error"
             }
@@ -87,6 +93,18 @@ internal class BaseRepositoryTest {
         }
     }
 
+    @ParameterizedTest
+    @MethodSource("valueFromFirstNonEmptySourceData")
+    fun `repository should emit value from first source that is not empty`(allResults: List<MockRepositoryBuilder.SourceResult>) {
+        MockRepositoryBuilder(allResults).run {
+            val testObserver = repository.observe().test()
+
+            repository.request()
+
+            testObserver.assertValueAt(1, Data.Loaded(EXPECTED))
+        }
+    }
+
     companion object {
         @JvmStatic
         fun subscribeToSourcesUntilFirstValueData() = arrayOf(
@@ -100,6 +118,17 @@ internal class BaseRepositoryTest {
                 arguments(2, listOf(Empty(), Value())),
                 arguments(2, listOf(Empty(), Value(), Value(), Value())),
                 arguments(5, listOf(Empty(), Empty(), Empty(), Empty(), Value(), Value(), Error()))
+        )
+
+        @JvmStatic
+        fun valueFromFirstNonEmptySourceData() = arrayOf(
+                listOf(Value(EXPECTED)),
+                listOf(Value(EXPECTED), Empty()),
+                listOf(Value(EXPECTED), Value()),
+                listOf(Value(EXPECTED), Value(), Value(), Empty(), Error(), Value()),
+                listOf(Empty(), Value(EXPECTED)),
+                listOf(Empty(), Value(EXPECTED), Value(), Value()),
+                listOf(Empty(), Empty(), Empty(), Empty(), Value(EXPECTED), Value(), Error())
         )
     }
 
