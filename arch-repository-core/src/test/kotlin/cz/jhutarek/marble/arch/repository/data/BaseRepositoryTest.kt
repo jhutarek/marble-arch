@@ -1,10 +1,12 @@
 package cz.jhutarek.marble.arch.repository.data
 
 import com.nhaarman.mockitokotlin2.*
+import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.*
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Error.Companion.EXPECTED_ERROR
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Value.Companion.EXPECTED_VALUE
 import cz.jhutarek.marble.arch.repository.model.Data
+import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.MaybeObserver
 import org.assertj.core.api.Assertions.assertThat
@@ -63,11 +65,16 @@ internal class BaseRepositoryTest {
         private val sourceResult = allResults.last()
         private val cacheResults = allResults.dropLast(1)
 
-        val sourceMock = mock<Source<String>> { on { request() } doReturn sourceResult.maybeSpy }
-        val sourceResultSpy = sourceResult.maybeSpy
+        private val sourceMock = mock<Source<String>> { on { request() } doReturn sourceResult.maybeSpy }
+        private val sourceResultSpy = sourceResult.maybeSpy
 
-        val cacheMocks = cacheResults.map { result -> mock<Cache<String>> { on { request() } doReturn result.maybeSpy } }
-        val cacheResultSpies = cacheResults.map { it.maybeSpy }
+        val cacheMocks = cacheResults.map { result ->
+            mock<Cache<String>> {
+                on { request() } doReturn result.maybeSpy
+                on { store(any()) } doReturn Completable.complete()
+            }
+        }
+        private val cacheResultSpies = cacheResults.map { it.maybeSpy }
 
         val allMocks = cacheMocks + sourceMock
         val allResultSpies = cacheResultSpies + sourceResultSpy
@@ -87,12 +94,12 @@ internal class BaseRepositoryTest {
 
     @ParameterizedTest
     @ArgumentsSource(SubscribeToSourcesUntilFirstValueProvider::class)
-    fun `repository should subscribe to sources in order until the first of them returns value`(expectedSubscribedSources: Int, allResults: List<MockRepositoryBuilder.SourceResult>) {
+    fun `repository should subscribe to sources in order until the first of them returns value`(expectedSubscribedSources: Int, allResults: List<SourceResult>) {
         MockRepositoryBuilder(allResults).run {
             repository.request()
 
             assertThat(allResultSpies.take(expectedSubscribedSources)).allSatisfy { verify(it).subscribe(any<MaybeObserver<String>>()) }
-            assertThat(allResultSpies.drop(expectedSubscribedSources)).allSatisfy { verifyZeroInteractions(it) }
+            assertThat(allResultSpies.drop(expectedSubscribedSources)).allSatisfy { verify(it, never()).subscribe(any<MaybeObserver<String>>()) }
         }
     }
 
@@ -124,7 +131,7 @@ internal class BaseRepositoryTest {
 
     @ParameterizedTest
     @ArgumentsSource(ValueFromFirstNonEmptySourceProvider::class)
-    fun `repository should emit value from first source that is not empty or error`(allResults: List<MockRepositoryBuilder.SourceResult>) {
+    fun `repository should emit value from first source that is not empty or error`(allResults: List<SourceResult>) {
         MockRepositoryBuilder(allResults).run {
             val testObserver = repository.observe().test()
 
@@ -148,7 +155,7 @@ internal class BaseRepositoryTest {
 
     @ParameterizedTest
     @ArgumentsSource(ErrorFromFirstNonEmptySourceProvider::class)
-    fun `repository should emit error from first source that is not empty or has value`(allResults: List<MockRepositoryBuilder.SourceResult>) {
+    fun `repository should emit error from first source that is not empty or has value`(allResults: List<SourceResult>) {
         MockRepositoryBuilder(allResults).run {
             val testObserver = repository.observe().test()
 
@@ -182,118 +189,30 @@ internal class BaseRepositoryTest {
         }
     }
 
-    /*@ParameterizedTest
-    @MethodSource("subscribeUntilFirstValueData")
-    fun `repository should subscribe to sources in order until the first of them returns value`(expectedSubscriptions: Int, caches: List<Pair<Cache<String>, Maybe<String>>>, source: Pair<Source<String>, Maybe<String>>) {
-        val allSources = listOf(source) + caches
-        val repository = Repository(source.first, *caches.map { it.first }.toTypedArray())
-
-        repository.request()
-
-        assertThat(allSources.take(expectedSubscriptions)).allSatisfy { verify(it.second).subscribe(any<MaybeObserver<String>>()) }
-        assertThat(allSources.drop(expectedSubscriptions)).allSatisfy { verifyZeroInteractions(it.second) }
-    }*/
-
-/*
-    private class Repository(source: Source<String>, vararg caches: Cache<String>) : BaseRepository<String>(source, *caches)
-
-    private val anyData = "anyData"
-    private val anySource = mock<Source<String>>()
-
-    private lateinit var repository: Repository
-    private lateinit var testObserver: TestObserver<Data<String>>
-
-    @BeforeEach
-    fun init() {
-        reset(anySource)
-    }
-
-    @Nested
-    @TestInstance(PER_CLASS)
-    @DisplayName("given no caches are injected, ")
-    internal inner class NoCachesInjected {
-        private val anyException = IllegalStateException("anyException")
-
-        @BeforeEach
-        fun init() {
-            repository = Repository(anySource)
-            testObserver = repository.observe().test()
-        }
-
-        @Test
-        fun `when observing value from repository, source should be requested and subscribed to`() {
-            val anySourceMaybe = spy(Maybe.just(anyData))
-            whenever(anySource.request()).thenReturn(anySourceMaybe)
-
+    @ParameterizedTest
+    @ArgumentsSource(StoreValueInHigherCachesProvider::class)
+    fun `should store value loaded from lower source in all higher caches`(expectedStoreCount: Int, allResults: List<SourceResult>) {
+        MockRepositoryBuilder(allResults).run {
             repository.request()
 
-            verify(anySource).request()
-            verify(anySourceMaybe).subscribe(any<MaybeObserver<String>>())
-        }
-
-        @Test
-        fun `when source emits value, repository should emit loading and then value`() {
-            assertRepositoryEmitsLoadingAndThen(Data.Loaded(anyData), Maybe.just(anyData))
-        }
-
-        @Test
-        fun `when source is empty, repository should emit loading and then empty`() {
-            assertRepositoryEmitsLoadingAndThen(Data.Empty, Maybe.empty())
-        }
-
-        @Test
-        fun `when source emits error, repository should emit loading and then error`() {
-            assertRepositoryEmitsLoadingAndThen(Data.Error(anyException), Maybe.error(anyException))
-        }
-
-        private fun assertRepositoryEmitsLoadingAndThen(data: Data<String>, sourceRequestResult: Maybe<String>) {
-            whenever(anySource.request()).thenReturn(sourceRequestResult)
-
-            repository.request()
-
-            testObserver.assertValues(Data.Loading, data)
+            assertThat(cacheMocks.take(expectedStoreCount)).allSatisfy { verify(it).store(EXPECTED_VALUE) }
+            assertThat(cacheMocks.drop(expectedStoreCount)).allSatisfy { verify(it, never()).store(any()) }
         }
     }
 
-    @Nested
-    @TestInstance(PER_CLASS)
-    @DisplayName("given multiple caches are injected, ")
-    internal inner class MultipleCachesInjected {
-        private val anyCache1 = mock<Cache<String>>()
-        private val anyCache2 = mock<Cache<String>>()
+    internal class StoreValueInHigherCachesProvider : BaseArgumentsProvider({
+        Stream.of(
+                arguments(0, listOf(Empty())),
+                arguments(0, listOf(Value())),
+                arguments(0, listOf(Error())),
+                arguments(0, listOf(Value(), Empty())),
+                arguments(0, listOf(Value(), Value())),
+                arguments(0, listOf(Empty(), Empty())),
+                arguments(1, listOf(Empty(), Value(EXPECTED_VALUE))),
+                arguments(2, listOf(Empty(), Empty(), Value(EXPECTED_VALUE), Empty(), Error(), Value())),
+                arguments(4, listOf(Empty(), Empty(), Empty(), Empty(), Value(EXPECTED_VALUE), Value(), Error()))
+        )
+    })
 
-        @BeforeEach
-        fun init() {
-            reset(anyCache1, anyCache2)
-            repository = Repository(anySource, anyCache1, anyCache2)
-            testObserver = repository.observe().test()
-        }
-
-        @Test
-        fun `when observing value from repository and only first cache emits value, other sources should be requested, but not subscribed to`() {
-            val anyCache1Maybe = spy(Maybe.just(anyData))
-            val anyCache2Maybe = spy(Maybe.empty<String>())
-            val anySourceMaybe = spy(Maybe.empty<String>())
-            whenever(anyCache1.request()).thenReturn(anyCache1Maybe)
-            whenever(anyCache2.request()).thenReturn(anyCache2Maybe)
-            whenever(anySource.request()).thenReturn(anySourceMaybe)
-
-            repository.request()
-
-            verify(anyCache1).request()
-            verify(anyCache2).request()
-            verify(anySource).request()
-            verify(anyCache1Maybe).subscribe(any<MaybeObserver<String>>())
-            verifyZeroInteractions(anyCache2Maybe, anySourceMaybe)
-        }
-
-        @Test
-        fun `when first cache emits value, repository should emit loading and then value`() {
-            whenever(anyCache1.request()).thenReturn(Maybe.just(anyData))
-
-            repository.request()
-
-            testObserver.assertValues(Data.Loading, Data.Loaded(anyData))
-        }
-    }*/
+    // TODO test cases when store returns Maybe.error
 }
