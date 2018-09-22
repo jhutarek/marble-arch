@@ -2,9 +2,11 @@ package cz.jhutarek.marble.arch.repository.data
 
 import com.nhaarman.mockitokotlin2.*
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.SourceResult.*
+import cz.jhutarek.marble.arch.repository.model.Data
 import io.reactivex.Maybe
 import io.reactivex.MaybeObserver
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -55,6 +57,17 @@ internal class BaseRepositoryTest {
 
         assertThat(allResultSpies.take(expectedSubscribedSources)).allSatisfy { verify(it).subscribe(any<MaybeObserver<String>>()) }
         assertThat(allResultSpies.drop(expectedSubscribedSources)).allSatisfy { verifyZeroInteractions(it) }
+    }
+
+    @Test
+    fun `repository should emit loading first when requested`() {
+        val source = mock<Source<String>> { on { request() } doReturn EMPTY.createMaybeSpy() }
+        val repository = Repository(source)
+        val testObserver = repository.observe().test()
+
+        repository.request()
+
+        testObserver.assertValue(Data.Loading)
     }
 
     companion object {

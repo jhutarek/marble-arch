@@ -1,5 +1,6 @@
 package cz.jhutarek.marble.arch.repository.data
 
+import com.jakewharton.rxrelay2.PublishRelay
 import cz.jhutarek.marble.arch.repository.domain.Repository
 import cz.jhutarek.marble.arch.repository.model.Data
 import io.reactivex.Maybe
@@ -14,15 +15,18 @@ abstract class BaseRepository<D : Any>(
 
     private val allSources = caches.toList() + source
 
-    //private val relay = PublishRelay.create<Data<D>>()
+    private val relay = PublishRelay.create<Data<D>>()
 
-    final override fun observe(): Observable<Data<D>> = TODO() //relay.hide()
+    final override fun observe(): Observable<Data<D>> = relay.hide()
 
     final override fun request() {
         allSources.map { it.request() }
                 .let { Maybe.concat(it) }
                 .firstElement()
-                .subscribe()
+                .map { Data.Loaded(it) as Data<D> }
+                .toObservable()
+                .startWith(Data.Loading)
+                .subscribe(relay)
     }
 }
 
