@@ -26,6 +26,7 @@ abstract class BaseRepository<D : Any>(
                 .map { Data.Loaded(it) as Data<D> }
                 .toObservable()
                 .startWith(Data.Loading)
+                .onErrorReturn { Data.Error(it) }
                 .subscribe(relay)
     }
 }

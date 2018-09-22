@@ -2,7 +2,8 @@ package cz.jhutarek.marble.arch.repository.data
 
 import com.nhaarman.mockitokotlin2.*
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.*
-import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Value.Companion.EXPECTED
+import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Error.Companion.EXPECTED_ERROR
+import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Value.Companion.EXPECTED_VALUE
 import cz.jhutarek.marble.arch.repository.model.Data
 import io.reactivex.Maybe
 import io.reactivex.MaybeObserver
@@ -38,17 +39,22 @@ internal class BaseRepositoryTest {
                 override fun toString() = "empty"
             }
 
-            data class Value(private val value: String = VALUE) : SourceResult() {
+            data class Value(private val value: String = ANY_VALUE) : SourceResult() {
                 companion object {
-                    const val VALUE = "value"
-                    const val EXPECTED = "expected"
+                    const val ANY_VALUE = "any value"
+                    const val EXPECTED_VALUE = "expected value"
                 }
 
                 override val maybeSpy: Maybe<String> = spy(Maybe.just(value))
                 override fun toString() = value
             }
 
-            data class Error(private val error: Throwable = IllegalStateException("error")) : SourceResult() {
+            data class Error(private val error: Throwable = ANY_ERROR) : SourceResult() {
+                companion object {
+                    val ANY_ERROR = IllegalStateException("any error")
+                    val EXPECTED_ERROR = IllegalStateException("expected error")
+                }
+
                 override val maybeSpy: Maybe<String> = spy(Maybe.error(error))
                 override fun toString() = "$error"
             }
@@ -118,25 +124,49 @@ internal class BaseRepositoryTest {
 
     @ParameterizedTest
     @ArgumentsSource(ValueFromFirstNonEmptySourceProvider::class)
-    fun `repository should emit value from first source that is not empty`(allResults: List<MockRepositoryBuilder.SourceResult>) {
+    fun `repository should emit value from first source that is not empty or error`(allResults: List<MockRepositoryBuilder.SourceResult>) {
         MockRepositoryBuilder(allResults).run {
             val testObserver = repository.observe().test()
 
             repository.request()
 
-            testObserver.assertValueAt(1, Data.Loaded(EXPECTED))
+            testObserver.assertValueAt(1, Data.Loaded(EXPECTED_VALUE))
         }
     }
 
     internal class ValueFromFirstNonEmptySourceProvider : BaseArgumentsProvider({
         Stream.of(
-                listOf(Value(EXPECTED)),
-                listOf(Value(EXPECTED), Empty()),
-                listOf(Value(EXPECTED), Value()),
-                listOf(Value(EXPECTED), Value(), Value(), Empty(), Error(), Value()),
-                listOf(Empty(), Value(EXPECTED)),
-                listOf(Empty(), Value(EXPECTED), Value(), Value()),
-                listOf(Empty(), Empty(), Empty(), Empty(), Value(EXPECTED), Value(), Error())
+                listOf(Value(EXPECTED_VALUE)),
+                listOf(Value(EXPECTED_VALUE), Empty()),
+                listOf(Value(EXPECTED_VALUE), Value()),
+                listOf(Value(EXPECTED_VALUE), Value(), Value(), Empty(), Error(), Value()),
+                listOf(Empty(), Value(EXPECTED_VALUE)),
+                listOf(Empty(), Value(EXPECTED_VALUE), Value(), Value()),
+                listOf(Empty(), Empty(), Empty(), Empty(), Value(EXPECTED_VALUE), Value(), Error())
+        ).map { arguments(it) }
+    })
+
+    @ParameterizedTest
+    @ArgumentsSource(ErrorFromFirstNonEmptySourceProvider::class)
+    fun `repository should emit error from first source that is not empty or has value`(allResults: List<MockRepositoryBuilder.SourceResult>) {
+        MockRepositoryBuilder(allResults).run {
+            val testObserver = repository.observe().test()
+
+            repository.request()
+
+            testObserver.assertValueAt(1, Data.Error(EXPECTED_ERROR))
+        }
+    }
+
+    internal class ErrorFromFirstNonEmptySourceProvider : BaseArgumentsProvider({
+        Stream.of(
+                listOf(Error(EXPECTED_ERROR)),
+                listOf(Error(EXPECTED_ERROR), Empty()),
+                listOf(Error(EXPECTED_ERROR), Error()),
+                listOf(Error(EXPECTED_ERROR), Error(), Value(), Empty(), Error(), Value()),
+                listOf(Empty(), Error(EXPECTED_ERROR)),
+                listOf(Empty(), Error(EXPECTED_ERROR), Error(), Value()),
+                listOf(Empty(), Empty(), Empty(), Empty(), Error(EXPECTED_ERROR), Value(), Error())
         ).map { arguments(it) }
     })
 
