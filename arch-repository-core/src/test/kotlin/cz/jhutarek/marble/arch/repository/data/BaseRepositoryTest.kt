@@ -1,7 +1,8 @@
 package cz.jhutarek.marble.arch.repository.data
 
 import com.nhaarman.mockitokotlin2.*
-import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.SourceResult.*
+import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.*
+import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Any
 import cz.jhutarek.marble.arch.repository.model.Data
 import io.reactivex.Maybe
 import io.reactivex.MaybeObserver
@@ -14,75 +15,91 @@ import org.junit.jupiter.params.provider.ValueSource
 
 internal class BaseRepositoryTest {
 
-    private class Repository(source: Source<String>, vararg caches: Cache<String>) : BaseRepository<String>(source, *caches)
+    internal class MockRepositoryBuilder(allResults: List<SourceResult> = listOf(Any())) {
+        internal sealed class SourceResult {
+            abstract val maybeSpy: Maybe<String>
 
-    internal enum class SourceResult(val createMaybeSpy: () -> Maybe<String>) {
-        EMPTY({ spy(Maybe.empty()) }),
-        VALUE({ spy(Maybe.just("anyValue")) }),
-        ERROR({ spy(Maybe.error(IllegalStateException("anyException"))) })
+            class Any : SourceResult() {
+                override val maybeSpy: Maybe<String> = spy(Maybe.empty())
+                override fun toString() = "any"
+            }
+
+            class Empty : SourceResult() {
+                override val maybeSpy: Maybe<String> = spy(Maybe.empty())
+                override fun toString() = "empty"
+            }
+
+            data class Value(private val value: String = "anyValue") : SourceResult() {
+                override val maybeSpy: Maybe<String> = spy(Maybe.just(value))
+                override fun toString() = value
+            }
+
+            data class Error(private val error: Throwable = IllegalStateException("anyError")) : SourceResult() {
+                override val maybeSpy: Maybe<String> = spy(Maybe.error(error))
+                override fun toString() = "$error"
+            }
+        }
+
+        private val sourceResult = allResults.last()
+        private val cacheResults = allResults.dropLast(1)
+
+        val sourceMock = mock<Source<String>> { on { request() } doReturn sourceResult.maybeSpy }
+        val sourceResultSpy = sourceResult.maybeSpy
+
+        val cacheMocks = cacheResults.map { result -> mock<Cache<String>> { on { request() } doReturn result.maybeSpy } }
+        val cacheResultSpies = cacheResults.map { it.maybeSpy }
+
+        val allMocks = cacheMocks + sourceMock
+        val allResultSpies = cacheResultSpies + sourceResultSpy
+
+        val repository = object : BaseRepository<String>(sourceMock, *cacheMocks.toTypedArray()) {}
     }
 
     @ParameterizedTest
     @ValueSource(ints = [1, 2, 3, 10])
     fun `repository should request each source when requested`(sourceCount: Int) {
-        val source = mock<Source<String>>()
-        val caches = List<Cache<String>>(sourceCount - 1) { mock() }
+        MockRepositoryBuilder(List(sourceCount) { Any() }).run {
+            repository.request()
 
-        Repository(source, *caches.toTypedArray()).request()
-
-        assertThat(caches + source).allSatisfy { verify(it).request() }
+            assertThat(allMocks).allSatisfy { verify(it).request() }
+        }
     }
 
     @ParameterizedTest
     @MethodSource("subscribeToSourcesUntilFirstValueData")
-    fun `repository should subscribe to sources in order until the first of them returns value`(expectedSubscribedSources: Int, sourceResults: List<SourceResult>) {
-        val sourceResultSpy = sourceResults
-                .last()
-                .createMaybeSpy()
-        val sourceMock = mock<Source<String>> {
-            on { request() } doReturn sourceResultSpy
+    fun `repository should subscribe to sources in order until the first of them returns value`(expectedSubscribedSources: Int, allResults: List<MockRepositoryBuilder.SourceResult>) {
+        MockRepositoryBuilder(allResults).run {
+            repository.request()
+
+            assertThat(allResultSpies.take(expectedSubscribedSources)).allSatisfy { verify(it).subscribe(any<MaybeObserver<String>>()) }
+            assertThat(allResultSpies.drop(expectedSubscribedSources)).allSatisfy { verifyZeroInteractions(it) }
         }
-        val cacheResultSpies = sourceResults
-                .dropLast(1)
-                .map { it.createMaybeSpy() }
-        val cacheMocks = cacheResultSpies
-                .map { resultSpy ->
-                    mock<Cache<String>> {
-                        on { request() } doReturn resultSpy
-                    }
-                }
-        val allResultSpies = cacheResultSpies + sourceResultSpy
-
-        Repository(sourceMock, *cacheMocks.toTypedArray()).request()
-
-        assertThat(allResultSpies.take(expectedSubscribedSources)).allSatisfy { verify(it).subscribe(any<MaybeObserver<String>>()) }
-        assertThat(allResultSpies.drop(expectedSubscribedSources)).allSatisfy { verifyZeroInteractions(it) }
     }
 
     @Test
     fun `repository should emit loading first when requested`() {
-        val source = mock<Source<String>> { on { request() } doReturn EMPTY.createMaybeSpy() }
-        val repository = Repository(source)
-        val testObserver = repository.observe().test()
+        MockRepositoryBuilder().run {
+            val testObserver = repository.observe().test()
 
-        repository.request()
+            repository.request()
 
-        testObserver.assertValue(Data.Loading)
+            testObserver.assertValue(Data.Loading)
+        }
     }
 
     companion object {
         @JvmStatic
         fun subscribeToSourcesUntilFirstValueData() = arrayOf(
-                arguments(1, listOf(EMPTY)),
-                arguments(1, listOf(VALUE)),
-                arguments(1, listOf(ERROR)),
-                arguments(1, listOf(VALUE, EMPTY)),
-                arguments(1, listOf(VALUE, VALUE)),
-                arguments(1, listOf(VALUE, VALUE, VALUE, EMPTY, ERROR, VALUE)),
-                arguments(2, listOf(EMPTY, EMPTY)),
-                arguments(2, listOf(EMPTY, VALUE)),
-                arguments(2, listOf(EMPTY, VALUE, VALUE, VALUE)),
-                arguments(5, listOf(EMPTY, EMPTY, EMPTY, EMPTY, VALUE, VALUE, ERROR))
+                arguments(1, listOf(Empty())),
+                arguments(1, listOf(Value())),
+                arguments(1, listOf(Error())),
+                arguments(1, listOf(Value(), Empty())),
+                arguments(1, listOf(Value(), Value())),
+                arguments(1, listOf(Value(), Value(), Value(), Empty(), Error(), Value())),
+                arguments(2, listOf(Empty(), Empty())),
+                arguments(2, listOf(Empty(), Value())),
+                arguments(2, listOf(Empty(), Value(), Value(), Value())),
+                arguments(5, listOf(Empty(), Empty(), Empty(), Empty(), Value(), Value(), Error()))
         )
     }
 
