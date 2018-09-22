@@ -21,10 +21,11 @@ abstract class BaseRepository<D : Any>(
     final override fun observe(): Observable<Data<D>> = relay.hide()
 
     final override fun request() {
-        allSources.mapIndexed { index, source ->
-            source.request()
-                    .map { result -> IndexedResult(index, result) }
-        }
+        allSources
+                .mapIndexed { index, source ->
+                    source.request()
+                            .map { result -> IndexedResult(index, result) }
+                }
                 .let { Maybe.concat(it) }
                 .firstElement()
                 .flatMap { storeValueInCaches(it) }
