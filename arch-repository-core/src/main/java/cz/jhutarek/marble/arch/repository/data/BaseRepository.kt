@@ -24,6 +24,7 @@ abstract class BaseRepository<D : Any>(
                 .let { Maybe.concat(it) }
                 .firstElement()
                 .map { Data.Loaded(it) as Data<D> }
+                .toSingle(Data.Empty)
                 .toObservable()
                 .startWith(Data.Loading)
                 .onErrorReturn { Data.Error(it) }

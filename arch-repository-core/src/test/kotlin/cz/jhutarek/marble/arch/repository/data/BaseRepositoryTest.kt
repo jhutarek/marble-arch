@@ -118,7 +118,7 @@ internal class BaseRepositoryTest {
 
             repository.request()
 
-            testObserver.assertValue(Data.Loading)
+            testObserver.assertValueAt(0, Data.Loading)
         }
     }
 
@@ -169,6 +169,18 @@ internal class BaseRepositoryTest {
                 listOf(Empty(), Empty(), Empty(), Empty(), Error(EXPECTED_ERROR), Value(), Error())
         ).map { arguments(it) }
     })
+
+    @ParameterizedTest
+    @ValueSource(ints = [1, 2, 3, 10])
+    fun `repository should emit empty if all sources are empty`(sourceCount: Int) {
+        MockRepositoryBuilder(List(sourceCount) { Empty() }).run {
+            val testObserver = repository.observe().test()
+
+            repository.request()
+
+            testObserver.assertValueAt(1, Data.Empty)
+        }
+    }
 
     /*@ParameterizedTest
     @MethodSource("subscribeUntilFirstValueData")
