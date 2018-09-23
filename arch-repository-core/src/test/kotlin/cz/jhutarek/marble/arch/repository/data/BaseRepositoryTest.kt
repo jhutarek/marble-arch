@@ -74,6 +74,7 @@ internal class BaseRepositoryTest {
             mock<Cache<String, String>> {
                 on { request(anyKey) } doReturn result.maybeSpy
                 on { store(eq(anyKey), any()) } doReturn Completable.complete()
+                on { clear(anyKey) } doReturn Completable.complete()
             }
         }
         private val cacheResultSpies = cacheResults.map { it.maybeSpy }
@@ -225,6 +226,35 @@ internal class BaseRepositoryTest {
             repository.request(anyKey)
 
             testObserver.assertValueAt(1, Data.Error(anyKey, EXPECTED_ERROR))
+        }
+    }
+
+    @Test
+    fun `repository should clear all caches even if result completable is not subscribed`() {
+        MockRepositoryBuilder(listOf(Value(), Empty(), Empty())).run {
+            repository.clearCaches(anyKey)
+
+            assertThat(cacheMocks).allSatisfy { verify(it).clear(anyKey) }
+        }
+    }
+
+    @Test
+    fun `repository should emit complete when all caches are successfully cleared`() {
+        MockRepositoryBuilder(listOf(Value(), Empty(), Empty())).run {
+            repository.clearCaches(anyKey)
+                    .test()
+                    .assertComplete()
+        }
+    }
+
+    @Test
+    fun `repository should emit error when any cache is not successfully cleared`() {
+        MockRepositoryBuilder(listOf(Value(), Empty(), Empty())).run {
+            whenever(cacheMocks[1].clear(anyKey)).thenReturn(Completable.error(EXPECTED_ERROR))
+
+            repository.clearCaches(anyKey)
+                    .test()
+                    .assertError(EXPECTED_ERROR)
         }
     }
 }
