@@ -35,6 +35,8 @@ dependencies {
 
     implementation 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.1.1'
 
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
     implementation 'com.google.dagger:dagger:2.17'
     kapt 'com.google.dagger:dagger-compiler:2.17'
 
