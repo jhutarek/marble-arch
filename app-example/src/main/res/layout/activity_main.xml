@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cz.jhutarek.marble.example.MainActivity"
+    tools:context="cz.jhutarek.marble.example.main.system.MainActivity"
     >
 
     <fragment
         android:id="@+id/counterFragment"
-        android:name="cz.jhutarek.marble.example.CounterFragment"
+        android:name="cz.jhutarek.marble.example.counter.system.CounterFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/counter_fragment"

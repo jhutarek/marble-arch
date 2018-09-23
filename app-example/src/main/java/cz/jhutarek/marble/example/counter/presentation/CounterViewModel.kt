@@ -1,4 +1,4 @@
-package cz.jhutarek.marble.example
+package cz.jhutarek.marble.example.counter.presentation
 
 import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
 import javax.inject.Inject

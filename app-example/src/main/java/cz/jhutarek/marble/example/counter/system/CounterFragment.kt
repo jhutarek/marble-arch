@@ -1,9 +1,11 @@
-package cz.jhutarek.marble.example
+package cz.jhutarek.marble.example.counter.system
 
 import android.os.Bundle
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import cz.jhutarek.marble.arch.mvvm.system.MarbleFragment
+import cz.jhutarek.marble.example.counter.presentation.CounterViewModel
+import cz.jhutarek.marble.example.main.system.MainApplication
 import cz.jhutarek.marblearch.R
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.counter_fragment.*

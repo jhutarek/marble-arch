@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name="cz.jhutarek.marble.example.MainApplication"
+        android:name="cz.jhutarek.marble.example.main.system.MainApplication"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="cz.jhutarek.marble.example.MainActivity">
+        <activity android:name="cz.jhutarek.marble.example.main.system.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

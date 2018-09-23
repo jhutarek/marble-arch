@@ -1,11 +1,11 @@
-package cz.jhutarek.marble.example
+package cz.jhutarek.marble.example.main.system
 
 import android.app.Application
 import android.content.Context
 import com.squareup.leakcanary.LeakCanary
 import cz.jhutarek.marble.arch.mvvm.system.Mvvm
-import dagger.Component
-import javax.inject.Singleton
+import cz.jhutarek.marble.example.main.di.DaggerMainComponent
+import cz.jhutarek.marble.example.main.di.MainComponent
 
 class MainApplication : Application() {
 
@@ -17,12 +17,6 @@ class MainApplication : Application() {
 
     private lateinit var component: MainComponent
 
-    @Singleton
-    @Component
-    interface MainComponent {
-        fun inject(fragment: CounterFragment)
-    }
-
     override fun onCreate() {
         super.onCreate()
 
@@ -31,6 +25,6 @@ class MainApplication : Application() {
 
         Mvvm.initialize()
 
-        component = DaggerMainApplication_MainComponent.create()
+        component = DaggerMainComponent.create()
     }
 }

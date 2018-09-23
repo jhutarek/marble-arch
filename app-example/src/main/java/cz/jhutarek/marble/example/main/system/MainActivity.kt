@@ -1,4 +1,4 @@
-package cz.jhutarek.marble.example
+package cz.jhutarek.marble.example.main.system
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
