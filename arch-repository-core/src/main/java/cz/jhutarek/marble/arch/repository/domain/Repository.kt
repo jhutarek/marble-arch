@@ -3,10 +3,9 @@ package cz.jhutarek.marble.arch.repository.domain
 import cz.jhutarek.marble.arch.repository.model.Data
 import io.reactivex.Observable
 
-// TODO support different keys
-interface Repository<D : Any> {
+interface Repository<K : Any, D : Any> {
 
-    fun observe(): Observable<Data<D>>
+    fun observe(): Observable<Data<K, D>>
 
-    fun request()
+    fun request(key: K)
 }

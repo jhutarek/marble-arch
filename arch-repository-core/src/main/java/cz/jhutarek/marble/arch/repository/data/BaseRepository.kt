@@ -7,41 +7,40 @@ import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 
-// TODO support different keys
-abstract class BaseRepository<D : Any>(
-        source: Source<D>,
-        vararg caches: Cache<D>
-) : Repository<D> {
+abstract class BaseRepository<K : Any, D : Any>(
+        source: Source<K, D>,
+        vararg caches: Cache<K, D>
+) : Repository<K, D> {
 
     private data class IndexedResult<out D : Any>(val index: Int, val value: D)
 
     private val allSources = caches.toList() + source
-    private val relay = PublishRelay.create<Data<D>>()
+    private val relay = PublishRelay.create<Data<K, D>>()
 
-    final override fun observe(): Observable<Data<D>> = relay.hide()
+    final override fun observe(): Observable<Data<K, D>> = relay.hide()
 
-    final override fun request() {
+    final override fun request(key: K) {
         allSources
                 .mapIndexed { index, source ->
-                    source.request()
+                    source.request(key)
                             .map { result -> IndexedResult(index, result) }
                 }
                 .let { Maybe.concat(it) }
                 .firstElement()
-                .flatMap { storeValueInCaches(it) }
-                .map { Data.Loaded(it) as Data<D> }
-                .toSingle(Data.Empty)
+                .flatMap { storeValueInCaches(key, it) }
+                .map { Data.Loaded(key, it) as Data<K, D> }
+                .toSingle(Data.Empty(key))
                 .toObservable()
-                .startWith(Data.Loading)
-                .onErrorReturn { Data.Error(it) }
+                .startWith(Data.Loading(key))
+                .onErrorReturn { Data.Error(key, it) }
                 .subscribe(relay)
     }
 
-    private fun storeValueInCaches(indexedResult: IndexedResult<D>): Maybe<D> = Completable.merge(
+    private fun storeValueInCaches(key: K, indexedResult: IndexedResult<D>): Maybe<D> = Completable.merge(
             allSources
                     .take(indexedResult.index)
-                    .filterIsInstance<Cache<D>>()
-                    .map { it.store(indexedResult.value) }
+                    .filterIsInstance<Cache<K, D>>()
+                    .map { it.store(key, indexedResult.value) }
     )
             .toSingle { indexedResult.value }
             .toMaybe()

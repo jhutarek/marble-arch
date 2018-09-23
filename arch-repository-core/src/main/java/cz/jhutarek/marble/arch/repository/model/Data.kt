@@ -1,16 +1,14 @@
 package cz.jhutarek.marble.arch.repository.model
 
-sealed class Data<out T : Any> {
+sealed class Data<out K : Any, out T : Any> {
 
-    object Loading : Data<Nothing>() {
-        override fun toString(): String = "Loading"
-    }
+    abstract val key: K
 
-    object Empty : Data<Nothing>() {
-        override fun toString(): String = "Empty"
-    }
+    data class Loading<out K : Any>(override val key: K) : Data<K, Nothing>()
 
-    data class Loaded<out T : Any>(val value: T) : Data<T>()
+    data class Empty<out K : Any>(override val key: K) : Data<K, Nothing>()
 
-    data class Error(val error: Throwable) : Data<Nothing>()
+    data class Loaded<out K : Any, out T : Any>(override val key: K, val value: T) : Data<K, T>()
+
+    data class Error<out K : Any>(override val key: K, val error: Throwable) : Data<K, Nothing>()
 }
