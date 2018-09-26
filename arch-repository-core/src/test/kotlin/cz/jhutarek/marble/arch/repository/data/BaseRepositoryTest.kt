@@ -87,7 +87,7 @@ internal class BaseRepositoryTest {
 
     @ParameterizedTest
     @ValueSource(ints = [1, 2, 3, 10])
-    fun `repository should request each source when requested`(sourceCount: Int) {
+    fun `repository should request each source when loaded`(sourceCount: Int) {
         MockRepositoryBuilder(List(sourceCount) { Whatever() }).run {
             repository.load(anyQuery)
 
@@ -122,7 +122,7 @@ internal class BaseRepositoryTest {
     })
 
     @Test
-    fun `repository should emit loading first when requested`() {
+    fun `repository should emit loading first when loading`() {
         MockRepositoryBuilder().run {
             val testObserver = repository.observe().test()
 

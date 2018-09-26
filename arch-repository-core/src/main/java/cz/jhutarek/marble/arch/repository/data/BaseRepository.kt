@@ -37,7 +37,6 @@ abstract class BaseRepository<Q : Any, D : Any>(
                 .subscribe(relay)
     }
 
-    // TODO rename load to load
     // TODO add mutating method which calls clear caches and then load
 
     final override fun clearCaches(query: Q?): Completable {
