@@ -10,5 +10,7 @@ interface Repository<Q : Any, D : Any> {
 
     fun load(query: Q)
 
+    fun update(query: Q)
+
     fun clearCaches(query: Q? = null): Completable
 }

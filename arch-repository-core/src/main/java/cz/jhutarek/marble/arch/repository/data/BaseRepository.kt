@@ -18,7 +18,7 @@ abstract class BaseRepository<Q : Any, D : Any>(
     private val allSources = caches.toList() + source
     private val relay = PublishRelay.create<Data<Q, D>>()
 
-    final override fun observe(): Observable<Data<Q, D>> = relay.hide()
+    final override fun observe(): Observable<Data<Q, D>> = relay.hide().distinctUntilChanged()
 
     final override fun load(query: Q) {
         allSources
@@ -37,7 +37,18 @@ abstract class BaseRepository<Q : Any, D : Any>(
                 .subscribe(relay)
     }
 
-    // TODO add mutating method which calls clear caches and then load
+    final override fun update(query: Q) {
+        Completable.concat(
+                listOf(
+                        clearCaches(query),
+                        Completable.fromAction { load(query) }
+                )
+        )
+                .toObservable<Data<Q, D>>()
+                .startWith(Data.Loading(query))
+                .onErrorReturn { Data.Error(query, it) }
+                .subscribe(relay)
+    }
 
     final override fun clearCaches(query: Q?): Completable {
         val resultSubject = PublishSubject.create<Unit>()

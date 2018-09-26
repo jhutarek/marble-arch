@@ -84,7 +84,7 @@ internal class BaseRepositoryTest {
         val allMocks = cacheMocks + sourceMock
         val allResultSpies = cacheResultSpies + sourceResultSpy
 
-        val repository = object : BaseRepository<String, String>(sourceMock, *cacheMocks.toTypedArray()) {}
+        val repository = spy(object : BaseRepository<String, String>(sourceMock, *cacheMocks.toTypedArray()) {})
     }
 
     @ParameterizedTest
@@ -257,6 +257,41 @@ internal class BaseRepositoryTest {
             repository.clearCaches(anyQuery)
                     .test()
                     .assertError(EXPECTED_ERROR)
+        }
+    }
+
+    @Test
+    fun `repository should emit loading on update`() {
+        MockRepositoryBuilder().run {
+            val testObserver = repository.observe().test()
+
+            repository.update(anyQuery)
+
+            testObserver.assertValueAt(0, Data.Loading(anyQuery))
+        }
+    }
+
+    @Test
+    fun `repository should clear all caches and load on update`() {
+        MockRepositoryBuilder().run {
+            repository.update(anyQuery)
+
+            inOrder(repository).apply {
+                verify(repository).clearCaches(anyQuery)
+                verify(repository).load(anyQuery)
+            }
+        }
+    }
+
+    @Test
+    fun `repository should emit error if caches are not successfully cleared on update`() {
+        MockRepositoryBuilder(listOf(Value(), Empty(), Empty())).run {
+            whenever(cacheMocks[1].clear(anyQuery)).thenReturn(Completable.error(EXPECTED_ERROR))
+            val testObserver = repository.observe().test()
+
+            repository.update(anyQuery)
+
+            testObserver.assertValueAt(1, Data.Error(anyQuery, EXPECTED_ERROR))
         }
     }
 }
