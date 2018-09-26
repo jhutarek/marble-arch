@@ -7,6 +7,7 @@ import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepository
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Value.Companion.EXPECTED_VALUE
 import cz.jhutarek.marble.arch.repository.model.Data
 import io.reactivex.Completable
+import io.reactivex.CompletableObserver
 import io.reactivex.Maybe
 import io.reactivex.MaybeObserver
 import org.assertj.core.api.Assertions.assertThat
@@ -70,11 +71,12 @@ internal class BaseRepositoryTest {
         private val sourceMock = mock<Source<String, String>> { on { request(anyQuery) } doReturn sourceResult.maybeSpy }
         private val sourceResultSpy = sourceResult.maybeSpy
 
-        val cacheMocks = cacheResults.map { result ->
+        val cacheClearSpies = List(cacheResults.size) { spy(Completable.complete()) }
+        val cacheMocks = cacheResults.mapIndexed { index, result ->
             mock<Cache<String, String>> {
                 on { request(anyQuery) } doReturn result.maybeSpy
                 on { store(eq(anyQuery), any()) } doReturn Completable.complete()
-                on { clear(anyQuery) } doReturn Completable.complete()
+                on { clear(anyQuery) } doReturn cacheClearSpies[index]
             }
         }
         private val cacheResultSpies = cacheResults.map { it.maybeSpy }
@@ -230,11 +232,11 @@ internal class BaseRepositoryTest {
     }
 
     @Test
-    fun `repository should clear all caches even if result completable is not subscribed`() {
+    fun `repository should subscribe to clear all caches even if result completable is not subscribed`() {
         MockRepositoryBuilder(listOf(Value(), Empty(), Empty())).run {
             repository.clearCaches(anyQuery)
 
-            assertThat(cacheMocks).allSatisfy { verify(it).clear(anyQuery) }
+            assertThat(cacheClearSpies).allSatisfy { verify(it).subscribe(any<CompletableObserver>()) }
         }
     }
 
