@@ -28,7 +28,7 @@ internal class BaseRepositoryTest {
     }
 
     internal class MockRepositoryBuilder(allResults: List<SourceResult> = listOf(Whatever())) {
-        val anyKey = "any key"
+        val anyQuery = "any query"
 
         internal sealed class SourceResult {
             abstract val maybeSpy: Maybe<String>
@@ -67,14 +67,14 @@ internal class BaseRepositoryTest {
         private val sourceResult = allResults.last()
         private val cacheResults = allResults.dropLast(1)
 
-        private val sourceMock = mock<Source<String, String>> { on { request(anyKey) } doReturn sourceResult.maybeSpy }
+        private val sourceMock = mock<Source<String, String>> { on { request(anyQuery) } doReturn sourceResult.maybeSpy }
         private val sourceResultSpy = sourceResult.maybeSpy
 
         val cacheMocks = cacheResults.map { result ->
             mock<Cache<String, String>> {
-                on { request(anyKey) } doReturn result.maybeSpy
-                on { store(eq(anyKey), any()) } doReturn Completable.complete()
-                on { clear(anyKey) } doReturn Completable.complete()
+                on { request(anyQuery) } doReturn result.maybeSpy
+                on { store(eq(anyQuery), any()) } doReturn Completable.complete()
+                on { clear(anyQuery) } doReturn Completable.complete()
             }
         }
         private val cacheResultSpies = cacheResults.map { it.maybeSpy }
@@ -89,9 +89,9 @@ internal class BaseRepositoryTest {
     @ValueSource(ints = [1, 2, 3, 10])
     fun `repository should request each source when requested`(sourceCount: Int) {
         MockRepositoryBuilder(List(sourceCount) { Whatever() }).run {
-            repository.request(anyKey)
+            repository.request(anyQuery)
 
-            assertThat(allMocks).allSatisfy { verify(it).request(anyKey) }
+            assertThat(allMocks).allSatisfy { verify(it).request(anyQuery) }
         }
     }
 
@@ -99,7 +99,7 @@ internal class BaseRepositoryTest {
     @ArgumentsSource(SubscribeToSourcesUntilFirstValueProvider::class)
     fun `repository should subscribe to sources until the first of them returns value`(expectedSubscribedSources: Int, allResults: List<SourceResult>) {
         MockRepositoryBuilder(allResults).run {
-            repository.request(anyKey)
+            repository.request(anyQuery)
 
             assertThat(allResultSpies.take(expectedSubscribedSources)).allSatisfy { verify(it).subscribe(any<MaybeObserver<String>>()) }
             assertThat(allResultSpies.drop(expectedSubscribedSources)).allSatisfy { verify(it, never()).subscribe(any<MaybeObserver<String>>()) }
@@ -126,9 +126,9 @@ internal class BaseRepositoryTest {
         MockRepositoryBuilder().run {
             val testObserver = repository.observe().test()
 
-            repository.request(anyKey)
+            repository.request(anyQuery)
 
-            testObserver.assertValueAt(0, Data.Loading(anyKey))
+            testObserver.assertValueAt(0, Data.Loading(anyQuery))
         }
     }
 
@@ -138,9 +138,9 @@ internal class BaseRepositoryTest {
         MockRepositoryBuilder(allResults).run {
             val testObserver = repository.observe().test()
 
-            repository.request(anyKey)
+            repository.request(anyQuery)
 
-            testObserver.assertValueAt(1, Data.Loaded(anyKey, EXPECTED_VALUE))
+            testObserver.assertValueAt(1, Data.Loaded(anyQuery, EXPECTED_VALUE))
         }
     }
 
@@ -162,9 +162,9 @@ internal class BaseRepositoryTest {
         MockRepositoryBuilder(allResults).run {
             val testObserver = repository.observe().test()
 
-            repository.request(anyKey)
+            repository.request(anyQuery)
 
-            testObserver.assertValueAt(1, Data.Error(anyKey, EXPECTED_ERROR))
+            testObserver.assertValueAt(1, Data.Error(anyQuery, EXPECTED_ERROR))
         }
     }
 
@@ -186,9 +186,9 @@ internal class BaseRepositoryTest {
         MockRepositoryBuilder(List(sourceCount) { Empty() }).run {
             val testObserver = repository.observe().test()
 
-            repository.request(anyKey)
+            repository.request(anyQuery)
 
-            testObserver.assertValueAt(1, Data.Empty(anyKey))
+            testObserver.assertValueAt(1, Data.Empty(anyQuery))
         }
     }
 
@@ -196,10 +196,10 @@ internal class BaseRepositoryTest {
     @ArgumentsSource(StoreValueInHigherCachesProvider::class)
     fun `repository should store value loaded from lower source in all higher caches`(expectedStoreCount: Int, allResults: List<SourceResult>) {
         MockRepositoryBuilder(allResults).run {
-            repository.request(anyKey)
+            repository.request(anyQuery)
 
-            assertThat(cacheMocks.take(expectedStoreCount)).allSatisfy { verify(it).store(anyKey, EXPECTED_VALUE) }
-            assertThat(cacheMocks.drop(expectedStoreCount)).allSatisfy { verify(it, never()).store(eq(anyKey), any()) }
+            assertThat(cacheMocks.take(expectedStoreCount)).allSatisfy { verify(it).store(anyQuery, EXPECTED_VALUE) }
+            assertThat(cacheMocks.drop(expectedStoreCount)).allSatisfy { verify(it, never()).store(eq(anyQuery), any()) }
         }
     }
 
@@ -220,28 +220,28 @@ internal class BaseRepositoryTest {
     @Test
     fun `repository should emit error if cache emits error when storing value`() {
         MockRepositoryBuilder(listOf(Empty(), Value())).run {
-            whenever(cacheMocks[0].store(eq(anyKey), any())).thenReturn(Completable.error(EXPECTED_ERROR))
+            whenever(cacheMocks[0].store(eq(anyQuery), any())).thenReturn(Completable.error(EXPECTED_ERROR))
             val testObserver = repository.observe().test()
 
-            repository.request(anyKey)
+            repository.request(anyQuery)
 
-            testObserver.assertValueAt(1, Data.Error(anyKey, EXPECTED_ERROR))
+            testObserver.assertValueAt(1, Data.Error(anyQuery, EXPECTED_ERROR))
         }
     }
 
     @Test
     fun `repository should clear all caches even if result completable is not subscribed`() {
         MockRepositoryBuilder(listOf(Value(), Empty(), Empty())).run {
-            repository.clearCaches(anyKey)
+            repository.clearCaches(anyQuery)
 
-            assertThat(cacheMocks).allSatisfy { verify(it).clear(anyKey) }
+            assertThat(cacheMocks).allSatisfy { verify(it).clear(anyQuery) }
         }
     }
 
     @Test
     fun `repository should emit complete when all caches are successfully cleared`() {
         MockRepositoryBuilder(listOf(Value(), Empty(), Empty())).run {
-            repository.clearCaches(anyKey)
+            repository.clearCaches(anyQuery)
                     .test()
                     .assertComplete()
         }
@@ -250,9 +250,9 @@ internal class BaseRepositoryTest {
     @Test
     fun `repository should emit error when any cache is not successfully cleared`() {
         MockRepositoryBuilder(listOf(Value(), Empty(), Empty())).run {
-            whenever(cacheMocks[1].clear(anyKey)).thenReturn(Completable.error(EXPECTED_ERROR))
+            whenever(cacheMocks[1].clear(anyQuery)).thenReturn(Completable.error(EXPECTED_ERROR))
 
-            repository.clearCaches(anyKey)
+            repository.clearCaches(anyQuery)
                     .test()
                     .assertError(EXPECTED_ERROR)
         }

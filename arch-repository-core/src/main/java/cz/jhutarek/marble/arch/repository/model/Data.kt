@@ -1,14 +1,14 @@
 package cz.jhutarek.marble.arch.repository.model
 
-sealed class Data<out K : Any, out T : Any> {
+sealed class Data<out Q : Any, out T : Any> {
 
-    abstract val key: K
+    abstract val query: Q
 
-    data class Loading<out K : Any>(override val key: K) : Data<K, Nothing>()
+    data class Loading<out Q : Any>(override val query: Q) : Data<Q, Nothing>()
 
-    data class Empty<out K : Any>(override val key: K) : Data<K, Nothing>()
+    data class Empty<out Q : Any>(override val query: Q) : Data<Q, Nothing>()
 
-    data class Loaded<out K : Any, out T : Any>(override val key: K, val value: T) : Data<K, T>()
+    data class Loaded<out Q : Any, out T : Any>(override val query: Q, val value: T) : Data<Q, T>()
 
-    data class Error<out K : Any>(override val key: K, val error: Throwable) : Data<K, Nothing>()
+    data class Error<out Q : Any>(override val query: Q, val error: Throwable) : Data<Q, Nothing>()
 }

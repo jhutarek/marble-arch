@@ -8,48 +8,48 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
-abstract class BaseRepository<K : Any, D : Any>(
-        source: Source<K, D>,
-        private vararg val caches: Cache<K, D>
-) : Repository<K, D> {
+abstract class BaseRepository<Q : Any, D : Any>(
+        source: Source<Q, D>,
+        private vararg val caches: Cache<Q, D>
+) : Repository<Q, D> {
 
     private data class IndexedResult<out D : Any>(val index: Int, val value: D)
 
     private val allSources = caches.toList() + source
-    private val relay = PublishRelay.create<Data<K, D>>()
+    private val relay = PublishRelay.create<Data<Q, D>>()
 
-    final override fun observe(): Observable<Data<K, D>> = relay.hide()
+    final override fun observe(): Observable<Data<Q, D>> = relay.hide()
 
-    final override fun request(key: K) {
+    final override fun request(query: Q) {
         allSources
                 .mapIndexed { index, source ->
-                    source.request(key)
+                    source.request(query)
                             .map { result -> IndexedResult(index, result) }
                 }
                 .let { Maybe.concat(it) }
                 .firstElement()
-                .flatMap { storeValueInCaches(key, it) }
-                .map { Data.Loaded(key, it) as Data<K, D> }
-                .toSingle(Data.Empty(key))
+                .flatMap { storeValueInCaches(query, it) }
+                .map { Data.Loaded(query, it) as Data<Q, D> }
+                .toSingle(Data.Empty(query))
                 .toObservable()
-                .startWith(Data.Loading(key))
-                .onErrorReturn { Data.Error(key, it) }
+                .startWith(Data.Loading(query))
+                .onErrorReturn { Data.Error(query, it) }
                 .subscribe(relay)
     }
 
-    final override fun clearCaches(key: K): Completable {
+    final override fun clearCaches(query: Q): Completable {
         val resultSubject = PublishSubject.create<Unit>()
 
-        Completable.merge(caches.map { it.clear(key) }).toObservable<Unit>().subscribe(resultSubject)
+        Completable.merge(caches.map { it.clear(query) }).toObservable<Unit>().subscribe(resultSubject)
 
         return resultSubject.hide().ignoreElements()
     }
 
-    private fun storeValueInCaches(key: K, indexedResult: IndexedResult<D>): Maybe<D> = Completable.merge(
+    private fun storeValueInCaches(query: Q, indexedResult: IndexedResult<D>): Maybe<D> = Completable.merge(
             allSources
                     .take(indexedResult.index)
-                    .filterIsInstance<Cache<K, D>>()
-                    .map { it.store(key, indexedResult.value) }
+                    .filterIsInstance<Cache<Q, D>>()
+                    .map { it.store(query, indexedResult.value) }
     )
             .toSingle { indexedResult.value }
             .toMaybe()

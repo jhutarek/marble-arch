@@ -4,11 +4,11 @@ import cz.jhutarek.marble.arch.repository.model.Data
 import io.reactivex.Completable
 import io.reactivex.Observable
 
-interface Repository<K : Any, D : Any> {
+interface Repository<Q : Any, D : Any> {
 
-    fun observe(): Observable<Data<K, D>>
+    fun observe(): Observable<Data<Q, D>>
 
-    fun request(key: K)
+    fun request(query: Q)
 
-    fun clearCaches(key: K): Completable
+    fun clearCaches(query: Q): Completable
 }

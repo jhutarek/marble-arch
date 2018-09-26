@@ -2,9 +2,9 @@ package cz.jhutarek.marble.arch.repository.data
 
 import io.reactivex.Completable
 
-interface Cache<in K : Any, D : Any> : Source<K, D> {
+interface Cache<in Q : Any, D : Any> : Source<Q, D> {
 
-    fun store(key: K, data: D): Completable
+    fun store(query: Q, data: D): Completable
 
-    fun clear(key: K): Completable
+    fun clear(query: Q): Completable
 }
