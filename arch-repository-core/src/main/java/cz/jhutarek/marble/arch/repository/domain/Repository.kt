@@ -8,7 +8,7 @@ interface Repository<Q : Any, D : Any> {
 
     fun observe(): Observable<Data<Q, D>>
 
-    fun request(query: Q)
+    fun load(query: Q)
 
-    fun clearCaches(query: Q): Completable
+    fun clearCaches(query: Q? = null): Completable
 }

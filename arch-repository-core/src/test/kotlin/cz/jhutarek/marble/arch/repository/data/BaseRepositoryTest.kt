@@ -89,7 +89,7 @@ internal class BaseRepositoryTest {
     @ValueSource(ints = [1, 2, 3, 10])
     fun `repository should request each source when requested`(sourceCount: Int) {
         MockRepositoryBuilder(List(sourceCount) { Whatever() }).run {
-            repository.request(anyQuery)
+            repository.load(anyQuery)
 
             assertThat(allMocks).allSatisfy { verify(it).request(anyQuery) }
         }
@@ -99,7 +99,7 @@ internal class BaseRepositoryTest {
     @ArgumentsSource(SubscribeToSourcesUntilFirstValueProvider::class)
     fun `repository should subscribe to sources until the first of them returns value`(expectedSubscribedSources: Int, allResults: List<SourceResult>) {
         MockRepositoryBuilder(allResults).run {
-            repository.request(anyQuery)
+            repository.load(anyQuery)
 
             assertThat(allResultSpies.take(expectedSubscribedSources)).allSatisfy { verify(it).subscribe(any<MaybeObserver<String>>()) }
             assertThat(allResultSpies.drop(expectedSubscribedSources)).allSatisfy { verify(it, never()).subscribe(any<MaybeObserver<String>>()) }
@@ -126,7 +126,7 @@ internal class BaseRepositoryTest {
         MockRepositoryBuilder().run {
             val testObserver = repository.observe().test()
 
-            repository.request(anyQuery)
+            repository.load(anyQuery)
 
             testObserver.assertValueAt(0, Data.Loading(anyQuery))
         }
@@ -138,7 +138,7 @@ internal class BaseRepositoryTest {
         MockRepositoryBuilder(allResults).run {
             val testObserver = repository.observe().test()
 
-            repository.request(anyQuery)
+            repository.load(anyQuery)
 
             testObserver.assertValueAt(1, Data.Loaded(anyQuery, EXPECTED_VALUE))
         }
@@ -162,7 +162,7 @@ internal class BaseRepositoryTest {
         MockRepositoryBuilder(allResults).run {
             val testObserver = repository.observe().test()
 
-            repository.request(anyQuery)
+            repository.load(anyQuery)
 
             testObserver.assertValueAt(1, Data.Error(anyQuery, EXPECTED_ERROR))
         }
@@ -186,7 +186,7 @@ internal class BaseRepositoryTest {
         MockRepositoryBuilder(List(sourceCount) { Empty() }).run {
             val testObserver = repository.observe().test()
 
-            repository.request(anyQuery)
+            repository.load(anyQuery)
 
             testObserver.assertValueAt(1, Data.Empty(anyQuery))
         }
@@ -196,7 +196,7 @@ internal class BaseRepositoryTest {
     @ArgumentsSource(StoreValueInHigherCachesProvider::class)
     fun `repository should store value loaded from lower source in all higher caches`(expectedStoreCount: Int, allResults: List<SourceResult>) {
         MockRepositoryBuilder(allResults).run {
-            repository.request(anyQuery)
+            repository.load(anyQuery)
 
             assertThat(cacheMocks.take(expectedStoreCount)).allSatisfy { verify(it).store(anyQuery, EXPECTED_VALUE) }
             assertThat(cacheMocks.drop(expectedStoreCount)).allSatisfy { verify(it, never()).store(eq(anyQuery), any()) }
@@ -223,7 +223,7 @@ internal class BaseRepositoryTest {
             whenever(cacheMocks[0].store(eq(anyQuery), any())).thenReturn(Completable.error(EXPECTED_ERROR))
             val testObserver = repository.observe().test()
 
-            repository.request(anyQuery)
+            repository.load(anyQuery)
 
             testObserver.assertValueAt(1, Data.Error(anyQuery, EXPECTED_ERROR))
         }

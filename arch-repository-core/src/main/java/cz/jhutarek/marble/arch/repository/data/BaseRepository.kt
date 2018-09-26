@@ -20,7 +20,7 @@ abstract class BaseRepository<Q : Any, D : Any>(
 
     final override fun observe(): Observable<Data<Q, D>> = relay.hide()
 
-    final override fun request(query: Q) {
+    final override fun load(query: Q) {
         allSources
                 .mapIndexed { index, source ->
                     source.request(query)
@@ -37,10 +37,10 @@ abstract class BaseRepository<Q : Any, D : Any>(
                 .subscribe(relay)
     }
 
-    // TODO rename request to load
+    // TODO rename load to load
     // TODO add mutating method which calls clear caches and then load
 
-    final override fun clearCaches(query: Q): Completable {
+    final override fun clearCaches(query: Q?): Completable {
         val resultSubject = PublishSubject.create<Unit>()
 
         Completable.merge(caches.map { it.clear(query) }).toObservable<Unit>().subscribe(resultSubject)
