@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Marble Arch</string>
+
+    <string name="overview__city">City</string>
 </resources>
