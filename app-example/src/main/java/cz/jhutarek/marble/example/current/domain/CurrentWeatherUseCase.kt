@@ -13,13 +13,13 @@ sealed class CurrentWeatherUseCase<in I, out O> : UseCase<I, O> {
     class Observe @Inject constructor(
             private val repository: CurrentWeatherRepository
     ) : CurrentWeatherUseCase<Unit, Observable<Data<CurrentWeatherRepository.Query, CurrentWeather>>>() {
-        override fun execute(input: Unit): Observable<Data<CurrentWeatherRepository.Query, CurrentWeather>> = repository.observe()
+        override operator fun invoke(input: Unit): Observable<Data<CurrentWeatherRepository.Query, CurrentWeather>> = repository.observe()
     }
 
     @Singleton
     class Load @Inject constructor(
             private val repository: CurrentWeatherRepository
     ) : CurrentWeatherUseCase<Unit, Unit>() {
-        override fun execute(input: Unit) = repository.load(CurrentWeatherRepository.Query())
+        override operator fun invoke(input: Unit) = repository.load(CurrentWeatherRepository.Query())
     }
 }

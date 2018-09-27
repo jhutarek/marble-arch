@@ -22,22 +22,22 @@ internal class CurrentWeatherViewModelTest {
         val anyQuery = Query()
     }
 
-    private val anyObserveUseCase = mock<CurrentWeatherUseCase.Observe>()
+    private val anyObserve = mock<CurrentWeatherUseCase.Observe>()
 
     @Test
     fun `should execute observe use case on construction`() {
-        CurrentWeatherViewModel(anyObserveUseCase)
+        CurrentWeatherViewModel(anyObserve)
 
-        verify(anyObserveUseCase).execute(Unit)
+        verify(anyObserve).invoke(Unit)
     }
 
     // TODO
     /*@ParameterizedTest
     @ArgumentsSource(ShouldMapRepositoryEmissionsProvider::class)
     fun `should map repository emissions to states`(expectedState: CurrentWeatherViewModel.State, data: Data<CurrentWeatherRepository.Query, CurrentWeather>) {
-        whenever(anyObserveUseCase.execute(Unit)).thenReturn(Observable.just(data))
+        whenever(anyObserve.execute(Unit)).thenReturn(Observable.just(data))
 
-        CurrentWeatherViewModel(anyObserveUseCase).states
+        CurrentWeatherViewModel(anyObserve).states
                 .test()
                 .assertValue(expectedState)
     }*/

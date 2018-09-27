@@ -8,7 +8,7 @@ import cz.jhutarek.marble.arch.mvvm.model.State as MarbleState
 
 @Singleton
 class CurrentWeatherViewModel @Inject constructor(
-        observeUseCase: CurrentWeatherUseCase.Observe
+        observe: CurrentWeatherUseCase.Observe
 ) : ViewModel<CurrentWeatherViewModel.State>(State()) {
 
     data class State(
@@ -29,6 +29,6 @@ class CurrentWeatherViewModel @Inject constructor(
     ) : MarbleState
 
     init {
-        observeUseCase.execute(Unit)
+        observe(Unit)
     }
 }

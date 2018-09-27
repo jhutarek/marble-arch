@@ -14,12 +14,12 @@ internal class CurrentWeatherUseCaseTest {
 
     @Nested
     inner class ObserveUseCase {
-        private val useCase = CurrentWeatherUseCase.Observe(anyRepository)
+        private val observe = CurrentWeatherUseCase.Observe(anyRepository)
         private val anyObservable = Observable.never<Data<CurrentWeatherRepository.Query, CurrentWeather>>()
 
         @Test
         fun `should execute observe on repository`() {
-            useCase.execute(Unit)
+            observe(Unit)
 
             verify(anyRepository).observe()
         }
@@ -28,17 +28,17 @@ internal class CurrentWeatherUseCaseTest {
         fun `should return observable from repository`() {
             whenever(anyRepository.observe()).doReturn(anyObservable)
 
-            assertThat(useCase.execute(Unit)).isEqualTo(anyObservable)
+            assertThat(observe(Unit)).isEqualTo(anyObservable)
         }
     }
 
     @Nested
     inner class LoadUseCase {
-        private val useCase = CurrentWeatherUseCase.Load(anyRepository)
+        private val load = CurrentWeatherUseCase.Load(anyRepository)
 
         @Test
         fun `should execute load on repository`() {
-            useCase.execute(Unit)
+            load(Unit)
 
             verify(anyRepository).load(any())
         }
