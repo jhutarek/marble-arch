@@ -9,10 +9,5 @@ import javax.inject.Singleton
 class AndroidStringsController @Inject constructor(
         private val context: Context
 ) : StringsController {
-    override fun getString(resId: Int, formatArgs: List<Any>): String =
-            if (formatArgs.isEmpty()) {
-                context.getString(resId)
-            } else {
-                context.getString(resId, *formatArgs.toTypedArray())
-            }
+    override fun getString(resId: Int): String = context.getString(resId)
 }
