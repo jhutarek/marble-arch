@@ -6,7 +6,6 @@ import cz.jhutarek.marble.example.current.domain.CurrentWeatherRepository.Query
 import cz.jhutarek.marble.example.current.model.CurrentWeather
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Observable.just
 import org.threeten.bp.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,7 +15,7 @@ class AndroidCurrentWeatherRepository @Inject constructor() : CurrentWeatherRepo
 
     override fun observe(): Observable<Data<CurrentWeatherRepository.Query, CurrentWeather>> {
         // TODO
-        return just(
+        return Observable.just(
                 Data.Loaded(
                         Query(),
                         CurrentWeather(
