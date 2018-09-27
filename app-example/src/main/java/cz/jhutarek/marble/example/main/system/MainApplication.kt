@@ -2,6 +2,7 @@ package cz.jhutarek.marble.example.main.system
 
 import android.app.Application
 import android.content.Context
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.squareup.leakcanary.LeakCanary
 import cz.jhutarek.marble.arch.mvvm.system.Mvvm
 import cz.jhutarek.marble.example.main.di.DaggerMainComponent
@@ -34,6 +35,7 @@ class MainApplication : Application() {
             Timber.plant(TagPrefixDebugTree("*MA: "))
         }
 
+        AndroidThreeTen.init(this)
         Mvvm.initialize()
 
         component = DaggerMainComponent.builder()
