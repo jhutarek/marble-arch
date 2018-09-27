@@ -1,14 +1,14 @@
 package cz.jhutarek.marble.example.main.di
 
 import android.content.Context
-import cz.jhutarek.marble.example.counter.di.CounterComponent
+import cz.jhutarek.marble.example.current.di.CurrentWeatherComponent
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
 @Component
-interface MainComponent : CounterComponent {
+interface MainComponent : CurrentWeatherComponent {
 
     @Component.Builder
     interface Builder {

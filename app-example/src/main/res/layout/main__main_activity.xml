@@ -7,11 +7,11 @@
     >
 
     <fragment
-        android:id="@+id/counterFragment"
-        android:name="cz.jhutarek.marble.example.counter.system.CounterFragment"
+        android:id="@+id/currentWeatherFragment"
+        android:name="cz.jhutarek.marble.example.current.system.CurrentWeatherFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout="@layout/counter_fragment"
+        tools:layout="@layout/current__current_weather_fragment"
         />
 
 </FrameLayout>
