@@ -26,10 +26,10 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
     final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater.inflate(layoutResId, container, false)
 
-    @CallSuper
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        onInitializeViews()
         onBindViews()
     }
 
@@ -51,6 +51,8 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
         statesDisposable?.dispose()
         statesDisposable = null
     }
+
+    protected open fun onInitializeViews() {}
 
     protected open fun onBindStates(states: Observable<S>): Disposable = Observable.never<Unit>().subscribe()
 
