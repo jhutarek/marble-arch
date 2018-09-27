@@ -17,6 +17,18 @@
         />
 
     <TextView
+        android:id="@+id/emptyMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/current__empty"
+        android:textAppearance="?textAppearanceBody1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
         android:id="@+id/errorMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,7 +51,7 @@
         />
 
     <TextView
-        android:id="@+id/date"
+        android:id="@+id/timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/content_padding"
@@ -93,15 +105,5 @@
         tools:text="Light drizzle, with mushroom clouds"
         />
 
-    <TextView
-        android:id="@+id/additionalInfo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?textAppearanceBody2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/description"
-        app:layout_constraintTop_toBottomOf="@+id/description"
-        tools:text="Wind 6.7 km/h 230°  •  Sunrise 5:42  •  Sunset 19:27"
-        />
-
+    <!-- TODO show wind, sunrise, sunset -->
 </androidx.constraintlayout.widget.ConstraintLayout>

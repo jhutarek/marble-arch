@@ -5,6 +5,7 @@
     <string name="overview__city">City</string>
     <string name="overview__refresh">Refresh</string>
 
+    <string name="current__empty">No data</string>
     <string name="current__error">Error loading current weather:\n%s</string>
     <string name="current__temperature">%.1f °C</string>
     <string name="current__pressure">%.1f mBar</string>
