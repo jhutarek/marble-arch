@@ -115,4 +115,11 @@
         app:layout_constraintTop_toBottomOf="@+id/description"
         tools:text="15 km/h   23°   Sunrise 6:23   Sunset 20:05"
         />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/dataGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="icon, timestamp, location, temperature, pressure, description, additionalInfo"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

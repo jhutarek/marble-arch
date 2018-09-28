@@ -24,8 +24,8 @@ class CurrentWeatherFragment : MarbleFragment<CurrentWeatherViewModel, CurrentWe
     override fun onBindStates(states: Observable<CurrentWeatherViewModel.State>) = states.subscribeForViews {
         progressBar.visibility = if (it.loadingVisible) VISIBLE else GONE
         emptyMessage.visibility = if (it.emptyVisible) VISIBLE else GONE
-        listOf(errorMessage, timestamp, location, temperature, pressure, description)
-                .forEach { view -> view.visibility = if (it.dataVisible) VISIBLE else GONE }
+        dataGroup.visibility = if (it.dataVisible) VISIBLE else GONE
+        errorMessage.visibility = if (it.errorVisible) VISIBLE else GONE
         errorMessage.text = it.error
         timestamp.text = it.timestamp
         location.text = it.location
