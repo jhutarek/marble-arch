@@ -7,6 +7,7 @@ import cz.jhutarek.marble.example.current.model.CurrentWeather
 import io.reactivex.Completable
 import io.reactivex.Observable
 import org.threeten.bp.ZonedDateTime
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,6 +35,8 @@ class AndroidCurrentWeatherRepository @Inject constructor() : CurrentWeatherRepo
     }
 
     override fun load(query: CurrentWeatherRepository.Query) {
+        Timber.d("Load")
+
         // TODO
     }
 
