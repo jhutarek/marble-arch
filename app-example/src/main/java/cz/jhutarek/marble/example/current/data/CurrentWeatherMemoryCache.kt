@@ -5,7 +5,6 @@ import cz.jhutarek.marble.example.current.domain.CurrentWeatherRepository
 import cz.jhutarek.marble.example.current.model.CurrentWeather
 import io.reactivex.Completable
 import io.reactivex.Maybe
-import io.reactivex.schedulers.Schedulers.computation
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,20 +15,14 @@ class CurrentWeatherMemoryCache @Inject constructor() : Cache<CurrentWeatherRepo
     private var value: CurrentWeather? = null
 
     override fun request(query: CurrentWeatherRepository.Query): Maybe<CurrentWeather> = Maybe.fromCallable<CurrentWeather> {
-        Thread.sleep(500)
         value
     }
-            .subscribeOn(computation())
 
     override fun store(query: CurrentWeatherRepository.Query, data: CurrentWeather): Completable = Completable.fromAction {
-        Thread.sleep(500)
         value = data
     }
-            .subscribeOn(computation())
 
     override fun clear(query: CurrentWeatherRepository.Query?): Completable = Completable.fromAction {
-        Thread.sleep(500)
         value = null
     }
-            .subscribeOn(computation())
 }
