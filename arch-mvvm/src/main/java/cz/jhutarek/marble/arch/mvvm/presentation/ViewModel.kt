@@ -9,7 +9,7 @@ import timber.log.Timber
 abstract class ViewModel<S : State>(defaultState: S) {
 
     protected val statesRelay: BehaviorRelay<S> = BehaviorRelay.createDefault(defaultState)
-    val states: Observable<S> = statesRelay.hide().doOnNext { Timber.d("State: $it") }
+    val states: Observable<S> = statesRelay.hide().doOnNext { Timber.d("$it") }
 
     protected fun BehaviorRelay<S>.accept(updater: (S) -> S) {
         accept(updater(value))

@@ -25,6 +25,8 @@ android {
     }
 }
 
+// TODO add log interface, implement correct subclass logging from superclasses
+
 dependencies {
     implementation project(':arch-mvvm')
     implementation project(':arch-usecase')
