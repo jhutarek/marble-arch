@@ -50,6 +50,7 @@ internal class CurrentWeatherViewModelTest {
         const val anyWindDirectionString = "any wind direction string: %.2f"
         const val anySunriseString = "any sunrise string: %s"
         const val anySunsetString = "any sunset string: %s"
+        const val anyAdditionalInfoSeparatorString = " | "
     }
 
     private val anyObserve = mock<CurrentWeatherUseCase.Observe> {
@@ -63,6 +64,7 @@ internal class CurrentWeatherViewModelTest {
         on { invoke(R.string.current__wind_direction) } doReturn anyWindDirectionString
         on { invoke(R.string.current__sunrise) } doReturn anySunriseString
         on { invoke(R.string.current__sunset) } doReturn anySunsetString
+        on { invoke(R.string.current__additional_info_separator) } doReturn anyAdditionalInfoSeparatorString
     }
 
     @Test
@@ -96,10 +98,7 @@ internal class CurrentWeatherViewModelTest {
                                 temperature = null,
                                 pressure = null,
                                 description = null,
-                                windSpeed = null,
-                                windDirection = null,
-                                sunriseTimestamp = null,
-                                sunsetTimestamp = null
+                                additionalInfo = null
                         ),
                         Data.Empty(anyQuery)
                 ),
@@ -115,10 +114,7 @@ internal class CurrentWeatherViewModelTest {
                                 temperature = null,
                                 pressure = null,
                                 description = null,
-                                windSpeed = null,
-                                windDirection = null,
-                                sunriseTimestamp = null,
-                                sunsetTimestamp = null
+                                additionalInfo = null
                         ),
                         Data.Loading(anyQuery)
                 ),
@@ -134,10 +130,7 @@ internal class CurrentWeatherViewModelTest {
                                 temperature = null,
                                 pressure = null,
                                 description = null,
-                                windSpeed = null,
-                                windDirection = null,
-                                sunriseTimestamp = null,
-                                sunsetTimestamp = null
+                                additionalInfo = null
                         ),
                         Data.Error(anyQuery, anyError)
                 ),
@@ -153,10 +146,12 @@ internal class CurrentWeatherViewModelTest {
                                 temperature = anyTemperatureString.format(anyCurrentWeather.temperatureCelsius),
                                 pressure = anyPressureString.format(anyCurrentWeather.pressureMilliBar),
                                 description = anyCurrentWeather.description,
-                                windSpeed = anyWindSpeedString.format(anyCurrentWeather.windSpeedKmph),
-                                windDirection = anyWindDirectionString.format(anyCurrentWeather.windDirectionDegrees),
-                                sunriseTimestamp = anyCurrentWeather.sunriseTimestamp?.format(DateTimeFormatter.ofPattern("H:mm"))?.let { anySunriseString.format(it) },
-                                sunsetTimestamp = anyCurrentWeather.sunsetTimestamp?.format(DateTimeFormatter.ofPattern("H:mm"))?.let { anySunsetString.format(it) }
+                                additionalInfo = listOf(
+                                        anyWindSpeedString.format(anyCurrentWeather.windSpeedKmph),
+                                        anyWindDirectionString.format(anyCurrentWeather.windDirectionDegrees),
+                                        anyCurrentWeather.sunriseTimestamp?.format(DateTimeFormatter.ofPattern("H:mm"))?.let { anySunriseString.format(it) },
+                                        anyCurrentWeather.sunsetTimestamp?.format(DateTimeFormatter.ofPattern("H:mm"))?.let { anySunsetString.format(it) }
+                                ).joinToString(separator = anyAdditionalInfoSeparatorString)
                         ),
                         Data.Loaded(anyQuery, anyCurrentWeather)
                 )

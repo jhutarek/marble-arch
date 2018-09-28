@@ -13,4 +13,5 @@
     <string name="current__wind_direction">%.1f°</string>
     <string name="current__sunrise">Sunrise %s</string>
     <string name="current__sunset">Sunset %s</string>
+    <string name="current__additional_info_separator">\u0020\u0020\u0020</string>
 </resources>

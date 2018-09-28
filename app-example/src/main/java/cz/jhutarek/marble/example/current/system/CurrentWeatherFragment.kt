@@ -32,6 +32,6 @@ class CurrentWeatherFragment : MarbleFragment<CurrentWeatherViewModel, CurrentWe
         temperature.text = it.temperature
         pressure.text = it.pressure
         description.text = it.description
-        // TODO set wind, sunrise, sunset
+        additionalInfo.text = it.additionalInfo
     }
 }
