@@ -41,5 +41,7 @@ class MainApplication : Application() {
         component = DaggerMainComponent.builder()
                 .applicationContext(applicationContext)
                 .build()
+
+        Timber.d("Application created")
     }
 }
