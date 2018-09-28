@@ -48,17 +48,21 @@ internal class CurrentWeatherViewModelTest {
         const val anyPressureString = "any pressure string: %.2f"
         const val anyWindSpeedString = "any wind speed string: %.2f"
         const val anyWindDirectionString = "any wind direction string: %.2f"
+        const val anySunriseString = "any sunrise string: %s"
+        const val anySunsetString = "any sunset string: %s"
     }
 
     private val anyObserve = mock<CurrentWeatherUseCase.Observe> {
         on { invoke(any()) } doReturn Observable.never<Data<CurrentWeatherRepository.Query, CurrentWeather>>()
     }
     private val anyGetString = mock<StringsUseCase.GetString> {
-        on { invoke(eq(R.string.current__error)) } doReturn anyErrorString
-        on { invoke(eq(R.string.current__temperature)) } doReturn anyTemperatureString
-        on { invoke(eq(R.string.current__pressure)) } doReturn anyPressureString
-        on { invoke(eq(R.string.current__wind_speed)) } doReturn anyWindSpeedString
-        on { invoke(eq(R.string.current__wind_direction)) } doReturn anyWindDirectionString
+        on { invoke(R.string.current__error) } doReturn anyErrorString
+        on { invoke(R.string.current__temperature) } doReturn anyTemperatureString
+        on { invoke(R.string.current__pressure) } doReturn anyPressureString
+        on { invoke(R.string.current__wind_speed) } doReturn anyWindSpeedString
+        on { invoke(R.string.current__wind_direction) } doReturn anyWindDirectionString
+        on { invoke(R.string.current__sunrise) } doReturn anySunriseString
+        on { invoke(R.string.current__sunset) } doReturn anySunsetString
     }
 
     @Test
@@ -151,8 +155,8 @@ internal class CurrentWeatherViewModelTest {
                                 description = anyCurrentWeather.description,
                                 windSpeed = anyWindSpeedString.format(anyCurrentWeather.windSpeedKmph),
                                 windDirection = anyWindDirectionString.format(anyCurrentWeather.windDirectionDegrees),
-                                sunriseTimestamp = anyCurrentWeather.sunriseTimestamp?.format(DateTimeFormatter.ofPattern("H:mm")),
-                                sunsetTimestamp = anyCurrentWeather.sunsetTimestamp?.format(DateTimeFormatter.ofPattern("H:mm"))
+                                sunriseTimestamp = anyCurrentWeather.sunriseTimestamp?.format(DateTimeFormatter.ofPattern("H:mm"))?.let { anySunriseString.format(it) },
+                                sunsetTimestamp = anyCurrentWeather.sunsetTimestamp?.format(DateTimeFormatter.ofPattern("H:mm"))?.let { anySunsetString.format(it) }
                         ),
                         Data.Loaded(anyQuery, anyCurrentWeather)
                 )

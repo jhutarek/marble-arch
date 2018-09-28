@@ -11,4 +11,6 @@
     <string name="current__pressure">%.1f mBar</string>
     <string name="current__wind_speed">%.1f km/h</string>
     <string name="current__wind_direction">%.1f°</string>
+    <string name="current__sunrise">Sunrise %s</string>
+    <string name="current__sunset">Sunset %s</string>
 </resources>
