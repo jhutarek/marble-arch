@@ -5,21 +5,32 @@ import cz.jhutarek.marble.example.current.domain.CurrentWeatherRepository
 import cz.jhutarek.marble.example.current.model.CurrentWeather
 import io.reactivex.Completable
 import io.reactivex.Maybe
+import org.threeten.bp.Duration
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// TODO extract base class, test
+// TODO extract base classes
+// TODO test
 @Singleton
 class CurrentWeatherMemoryCache @Inject constructor() : Cache<CurrentWeatherRepository.Query, CurrentWeather> {
 
-    private var value: CurrentWeather? = null
+    private val timeToLive = Duration.ofSeconds(10)
+
+    private data class TimestampedCurrentWeather(val timestamp: Long, val currentWeather: CurrentWeather)
+
+    private var value: TimestampedCurrentWeather? = null
 
     override fun request(query: CurrentWeatherRepository.Query): Maybe<CurrentWeather> = Maybe.fromCallable<CurrentWeather> {
-        value
+        if (Duration.ofMillis(value?.timestamp ?: 0).plus(timeToLive).minusMillis(System.currentTimeMillis()) > Duration.ZERO) {
+            value?.currentWeather
+        } else {
+            value = null
+            null
+        }
     }
 
     override fun store(query: CurrentWeatherRepository.Query, data: CurrentWeather): Completable = Completable.fromAction {
-        value = data
+        value = TimestampedCurrentWeather(System.currentTimeMillis(), data)
     }
 
     override fun clear(query: CurrentWeatherRepository.Query?): Completable = Completable.fromAction {
