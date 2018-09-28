@@ -3,7 +3,6 @@ package cz.jhutarek.marble.example.current.presentation
 import com.nhaarman.mockitokotlin2.*
 import cz.jhutarek.marble.arch.repository.model.Data
 import cz.jhutarek.marble.arch.resources.domain.StringsUseCase
-import cz.jhutarek.marble.example.current.domain.CurrentWeatherRepository
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherRepository.Query
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
 import cz.jhutarek.marble.example.current.model.CurrentWeather
@@ -54,7 +53,7 @@ internal class CurrentWeatherViewModelTest {
     }
 
     private val anyObserve = mock<CurrentWeatherUseCase.Observe> {
-        on { invoke(any()) } doReturn Observable.never<Data<CurrentWeatherRepository.Query, CurrentWeather>>()
+        on { invoke(any()) } doReturn Observable.never<Data<Unit, CurrentWeather>>()
     }
     private val anyGetString = mock<StringsUseCase.GetString> {
         on { invoke(R.string.current__error) } doReturn anyErrorString
@@ -76,7 +75,7 @@ internal class CurrentWeatherViewModelTest {
 
     @ParameterizedTest
     @ArgumentsSource(ShouldMapRepositoryEmissionsProvider::class)
-    fun `should map repository emissions to states`(expectedState: CurrentWeatherViewModel.State, data: Data<CurrentWeatherRepository.Query, CurrentWeather>) {
+    fun `should map repository emissions to states`(expectedState: CurrentWeatherViewModel.State, data: Data<Unit, CurrentWeather>) {
         whenever(anyObserve(Unit)).thenReturn(Observable.just(data))
 
         CurrentWeatherViewModel(anyObserve, anyGetString).states

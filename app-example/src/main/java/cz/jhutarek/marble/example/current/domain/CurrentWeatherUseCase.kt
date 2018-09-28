@@ -12,8 +12,8 @@ sealed class CurrentWeatherUseCase<in I, out O> : UseCase<I, O> {
     @Singleton
     class Observe @Inject constructor(
             private val repository: CurrentWeatherRepository
-    ) : CurrentWeatherUseCase<Unit, Observable<Data<CurrentWeatherRepository.Query, CurrentWeather>>>() {
-        override operator fun invoke(input: Unit): Observable<Data<CurrentWeatherRepository.Query, CurrentWeather>> = repository.observe()
+    ) : CurrentWeatherUseCase<Unit, Observable<Data<Unit, CurrentWeather>>>() {
+        override operator fun invoke(input: Unit): Observable<Data<Unit, CurrentWeather>> = repository.observe().map { it.mapQuery { Unit } } // TODO add Observable.mapQuery extension
     }
 
     @Singleton

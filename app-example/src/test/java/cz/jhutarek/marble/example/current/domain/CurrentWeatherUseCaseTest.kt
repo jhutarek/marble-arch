@@ -4,7 +4,6 @@ import com.nhaarman.mockitokotlin2.*
 import cz.jhutarek.marble.arch.repository.model.Data
 import cz.jhutarek.marble.example.current.model.CurrentWeather
 import io.reactivex.Observable
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -14,21 +13,26 @@ internal class CurrentWeatherUseCaseTest {
 
     @Nested
     inner class ObserveUseCase {
+        private val anyRepositoryData: Data<CurrentWeatherRepository.Query, CurrentWeather> = Data.Loading(CurrentWeatherRepository.Query())
+        private val expectedMappedData = Data.Loading(Unit)
         private val observe = CurrentWeatherUseCase.Observe(anyRepository)
-        private val anyObservable = Observable.never<Data<CurrentWeatherRepository.Query, CurrentWeather>>()
 
         @Test
         fun `should execute observe on repository`() {
+            whenever(anyRepository.observe()).thenReturn(Observable.never())
+
             observe(Unit)
 
             verify(anyRepository).observe()
         }
 
         @Test
-        fun `should return observable from repository`() {
-            whenever(anyRepository.observe()).doReturn(anyObservable)
+        fun `should return mapped observable from repository`() {
+            whenever(anyRepository.observe()).doReturn(Observable.just(anyRepositoryData))
 
-            assertThat(observe(Unit)).isEqualTo(anyObservable)
+            observe(Unit)
+                    .test()
+                    .assertValue(expectedMappedData)
         }
     }
 
