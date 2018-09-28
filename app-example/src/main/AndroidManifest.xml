@@ -3,6 +3,8 @@
     package="cz.jhutarek.marblearch"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name="cz.jhutarek.marble.example.main.system.MainApplication"
         android:allowBackup="false"
