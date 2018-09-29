@@ -5,5 +5,30 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="textAppearanceHeadline3">@style/TextAppearanceHeadline3</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearanceHeadline6</item>
+        <item name="textAppearanceBody1">@style/TextAppearanceBody1</item>
+        <item name="textAppearanceBody2">@style/TextAppearanceBody2</item>
+    </style>
+
+    <style name="TextAppearanceHeadline3" parent="TextAppearance.MaterialComponents.Headline3">
+        <item name="fontFamily">@font/rubik_light</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearanceHeadline6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/rubik_medium</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearanceBody1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="fontFamily">@font/rubik_regular</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearanceBody2" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="fontFamily">@font/rubik_regular</item>
+        <item name="android:letterSpacing">0</item>
     </style>
 </resources>
