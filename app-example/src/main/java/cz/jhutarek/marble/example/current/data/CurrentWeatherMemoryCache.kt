@@ -15,26 +15,28 @@ import javax.inject.Singleton
 @Singleton
 class CurrentWeatherMemoryCache @Inject constructor() : Cache<CurrentWeatherRepository.Query, CurrentWeather> {
 
-    private val timeToLive = Duration.ofSeconds(10)
-
     private data class TimestampedCurrentWeather(val timestamp: Long, val currentWeather: CurrentWeather)
 
-    private var value: TimestampedCurrentWeather? = null
+    private val timeToLive = Duration.ofSeconds(30)
+
+    private val values = mutableMapOf<CurrentWeatherRepository.Query, TimestampedCurrentWeather>()
 
     override fun request(query: CurrentWeatherRepository.Query): Maybe<CurrentWeather> = Maybe.fromCallable<CurrentWeather> {
-        if (Duration.ofMillis(value?.timestamp ?: 0).plus(timeToLive).minusMillis(System.currentTimeMillis()) > Duration.ZERO) {
-            value?.currentWeather
-        } else {
-            value = null
-            null
+        values[query]?.let {
+            if (Duration.ofMillis(it.timestamp).plus(timeToLive).minusMillis(System.currentTimeMillis()) > Duration.ZERO) {
+                it.currentWeather
+            } else {
+                values.remove(query)
+                null
+            }
         }
     }
 
     override fun store(query: CurrentWeatherRepository.Query, data: CurrentWeather): Completable = Completable.fromAction {
-        value = TimestampedCurrentWeather(System.currentTimeMillis(), data)
+        values[query] = TimestampedCurrentWeather(System.currentTimeMillis(), data)
     }
 
     override fun clear(query: CurrentWeatherRepository.Query?): Completable = Completable.fromAction {
-        value = null
+        values.clear()
     }
 }
