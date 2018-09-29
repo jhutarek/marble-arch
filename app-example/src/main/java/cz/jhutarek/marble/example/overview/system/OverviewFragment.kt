@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import cz.jhutarek.marble.arch.mvvm.system.MarbleFragment
+import cz.jhutarek.marble.arch.mvvm.system.textString
 import cz.jhutarek.marble.example.main.system.MainApplication
 import cz.jhutarek.marble.example.overview.presentation.OverviewViewModel
 import cz.jhutarek.marblearch.R
@@ -33,6 +34,6 @@ class OverviewFragment : MarbleFragment<OverviewViewModel, OverviewViewModel.Sta
 
     override fun onBindStates(states: Observable<OverviewViewModel.State>) = states.subscribeForViews {
         toolbar.menu.findItem(R.id.refresh).isEnabled = it.refreshEnabled
-        input.setText(it.input)
+        input.textString = it.input
     }
 }
