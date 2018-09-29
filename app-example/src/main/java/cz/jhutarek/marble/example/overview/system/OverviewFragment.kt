@@ -1,7 +1,9 @@
 package cz.jhutarek.marble.example.overview.system
 
 import android.os.Bundle
+import android.view.inputmethod.EditorInfo
 import com.jakewharton.rxbinding2.view.clicks
+import com.jakewharton.rxbinding2.widget.editorActions
 import com.jakewharton.rxbinding2.widget.textChanges
 import cz.jhutarek.marble.arch.mvvm.system.MarbleFragment
 import cz.jhutarek.marble.arch.mvvm.system.textString
@@ -30,6 +32,7 @@ class OverviewFragment : MarbleFragment<OverviewViewModel, OverviewViewModel.Sta
     override fun onBindViews() {
         toolbar.menu.findItem(R.id.refresh).clicks().subscribeForViewModel { refresh() }
         input.textChanges().debounce(250, MILLISECONDS).subscribeForViewModel { setInput(it) }
+        input.editorActions().filter { it == EditorInfo.IME_ACTION_SEARCH }.subscribeForViewModel { refresh() }
     }
 
     override fun onBindStates(states: Observable<OverviewViewModel.State>) = states.subscribeForViews {
