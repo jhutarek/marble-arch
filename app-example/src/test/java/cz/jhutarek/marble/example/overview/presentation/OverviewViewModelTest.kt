@@ -6,6 +6,7 @@ import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import cz.jhutarek.marble.arch.repository.model.Data
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
+import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Load
 import cz.jhutarek.marble.example.current.model.CurrentWeather
 import cz.jhutarek.marble.example.current.presentation.CurrentWeatherViewModelTest
 import io.reactivex.Observable
@@ -74,10 +75,14 @@ internal class OverviewViewModelTest {
     }
 
     @Test
-    fun `should execute load current weather use case on refresh`() {
-        OverviewViewModel(anyObserve, anyLoadCurrentWeather).refresh()
+    fun `should execute load current weather use case on refresh with current input`() {
+        OverviewViewModel(anyObserve, anyLoadCurrentWeather).apply {
+            setInput(anyInput)
 
-        verify(anyLoadCurrentWeather).invoke(Unit)
+            refresh()
+        }
+
+        verify(anyLoadCurrentWeather).invoke(Load.ByCity(anyInput))
     }
 
     @Test

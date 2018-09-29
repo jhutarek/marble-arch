@@ -2,6 +2,8 @@ package cz.jhutarek.marble.example.current.domain
 
 import com.nhaarman.mockitokotlin2.*
 import cz.jhutarek.marble.arch.repository.model.Data
+import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Load
+import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Observe
 import cz.jhutarek.marble.example.current.model.CurrentWeather
 import io.reactivex.Observable
 import org.junit.jupiter.api.Nested
@@ -15,7 +17,7 @@ internal class CurrentWeatherUseCaseTest {
     inner class ObserveUseCase {
         private val anyRepositoryData: Data<CurrentWeatherRepository.Query, CurrentWeather> = Data.Loading(CurrentWeatherRepository.Query())
         private val expectedMappedData = Data.Loading(Unit)
-        private val observe = CurrentWeatherUseCase.Observe(anyRepository)
+        private val observe = Observe(anyRepository)
 
         @Test
         fun `should execute observe on repository`() {
@@ -38,11 +40,12 @@ internal class CurrentWeatherUseCaseTest {
 
     @Nested
     inner class LoadUseCase {
-        private val load = CurrentWeatherUseCase.Load(anyRepository)
+        private val anyByCity = Load.ByCity("any city")
+        private val load = Load(anyRepository)
 
         @Test
         fun `should execute load on repository`() {
-            load(Unit)
+            load(anyByCity)
 
             verify(anyRepository).load(any())
         }

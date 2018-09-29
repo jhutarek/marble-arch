@@ -19,7 +19,9 @@ sealed class CurrentWeatherUseCase<in I, out O> : UseCase<I, O> {
     @Singleton
     class Load @Inject constructor(
             private val repository: CurrentWeatherRepository
-    ) : CurrentWeatherUseCase<Unit, Unit>() {
-        override operator fun invoke(input: Unit) = repository.load(CurrentWeatherRepository.Query())
+    ) : CurrentWeatherUseCase<Load.ByCity, Unit>() {
+        data class ByCity(val city: String)
+
+        override operator fun invoke(input: ByCity) = repository.load(CurrentWeatherRepository.Query())
     }
 }

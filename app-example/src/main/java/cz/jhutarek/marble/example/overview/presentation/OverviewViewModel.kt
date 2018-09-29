@@ -3,6 +3,7 @@ package cz.jhutarek.marble.example.overview.presentation
 import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
 import cz.jhutarek.marble.arch.repository.model.Data
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
+import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Load.ByCity
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,7 +34,7 @@ class OverviewViewModel @Inject constructor(
     fun refresh() {
         Timber.d("Refresh")
 
-        loadCurrentWeather(Unit)
+        loadCurrentWeather(ByCity(statesRelay.value.input.orEmpty()))
     }
 
     fun setInput(input: CharSequence) {
