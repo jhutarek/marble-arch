@@ -30,7 +30,7 @@ internal class CurrentWeatherViewModelTest {
 
     companion object {
         val anyError = IllegalStateException("any error")
-        val anyQuery = Query()
+        val anyQuery = mock<Query>()
         val anyCurrentWeather = CurrentWeather(
                 ZonedDateTime.of(2018, 10, 10, 10, 10, 10, 10, ZoneId.systemDefault()),
                 "any location",
