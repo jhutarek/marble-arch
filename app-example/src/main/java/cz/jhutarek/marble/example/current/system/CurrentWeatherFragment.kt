@@ -1,8 +1,7 @@
 package cz.jhutarek.marble.example.current.system
 
 import android.os.Bundle
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import androidx.core.view.isVisible
 import cz.jhutarek.marble.arch.mvvm.system.MarbleFragment
 import cz.jhutarek.marble.example.current.presentation.CurrentWeatherViewModel
 import cz.jhutarek.marble.example.main.system.MainApplication
@@ -22,10 +21,10 @@ class CurrentWeatherFragment : MarbleFragment<CurrentWeatherViewModel, CurrentWe
     }
 
     override fun onBindStates(states: Observable<CurrentWeatherViewModel.State>) = states.subscribeForViews {
-        progressBar.visibility = if (it.loadingVisible) VISIBLE else GONE
-        emptyMessage.visibility = if (it.emptyVisible) VISIBLE else GONE
-        dataGroup.visibility = if (it.dataVisible) VISIBLE else GONE
-        errorMessage.visibility = if (it.errorVisible) VISIBLE else GONE
+        progressBar.isVisible = it.loadingVisible
+        emptyMessage.isVisible = it.emptyVisible
+        dataGroup.isVisible = it.dataVisible
+        errorMessage.isVisible = it.errorVisible
         errorMessage.text = it.error
         timestamp.text = it.timestamp
         location.text = it.location
