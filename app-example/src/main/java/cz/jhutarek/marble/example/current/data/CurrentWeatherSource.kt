@@ -5,6 +5,7 @@ import com.squareup.moshi.JsonClass
 import cz.jhutarek.marble.arch.repository.data.Source
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherRepository
 import cz.jhutarek.marble.example.current.model.CurrentWeather
+import cz.jhutarek.marble.example.current.model.CurrentWeather.DescriptionCode.*
 import io.reactivex.Maybe
 import io.reactivex.schedulers.Schedulers.io
 import org.threeten.bp.Instant
@@ -97,6 +98,7 @@ class CurrentWeatherSource @Inject constructor() : Source<CurrentWeatherReposito
                         temperatureCelsius = it.mainParameters?.temperatureCelsius,
                         pressureMilliBar = it.mainParameters?.pressureMilliBar,
                         descriptionText = it.weatherDescriptions?.first()?.long,
+                        descriptionCode = it.weatherDescriptions?.first()?.code?.toDescriptionCode() ?: UNKNOWN,
                         windSpeedKmph = it.wind?.speedKmph,
                         windDirectionDegrees = it.wind?.directionDegrees,
                         sunriseTimestamp = it.sun?.sunriseTimestamp?.let { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneId.systemDefault()) },
@@ -107,4 +109,18 @@ class CurrentWeatherSource @Inject constructor() : Source<CurrentWeatherReposito
             .doOnError { Timber.e("Error: $it") }
             .doOnComplete { Timber.d("No response") }
             .subscribeOn(io())
+
+    private fun Int.toDescriptionCode() = when (this) {
+        in 200..299 -> THUNDERSTORM
+        in 300..399 -> DRIZZLE
+        in 500..504 -> LIGHT_RAIN
+        in 511..599 -> HEAVY_RAIN
+        in 600..699 -> SNOW
+        in 700..799 -> FOG
+        800 -> CLEAR
+        801 -> FEW_CLOUDS
+        802 -> SCATTERED_CLOUDS
+        in 803..804 -> OVERCAST_CLOUDS
+        else -> UNKNOWN
+    }
 }

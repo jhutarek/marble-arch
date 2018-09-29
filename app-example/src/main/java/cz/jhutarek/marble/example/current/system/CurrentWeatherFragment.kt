@@ -26,11 +26,12 @@ class CurrentWeatherFragment : MarbleFragment<CurrentWeatherViewModel, CurrentWe
         dataGroup.isVisible = it.dataVisible
         errorMessage.isVisible = it.errorVisible
         errorMessage.text = it.error
+        icon.setImageResource(it.descriptionIcon)
         timestamp.text = it.timestamp
         location.text = it.location
         temperature.text = it.temperature
         pressure.text = it.pressure
-        description.text = it.description
+        description.text = it.descriptionText
         additionalInfo.text = it.additionalInfo
     }
 }
