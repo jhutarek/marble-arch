@@ -4,6 +4,7 @@ import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
 import cz.jhutarek.marble.arch.repository.model.Data
 import cz.jhutarek.marble.arch.resources.domain.StringsUseCase
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
+import cz.jhutarek.marble.example.current.model.CurrentWeather.DescriptionCode.*
 import cz.jhutarek.marblearch.R
 import org.threeten.bp.format.DateTimeFormatter
 import javax.inject.Inject
@@ -15,6 +16,21 @@ class CurrentWeatherViewModel @Inject constructor(
         observe: CurrentWeatherUseCase.Observe,
         getString: StringsUseCase.GetString
 ) : ViewModel<CurrentWeatherViewModel.State>(State()) {
+
+    companion object {
+        private val descriptionIconMap = mapOf(
+                CLEAR to R.drawable.ic_clear,
+                DRIZZLE to R.drawable.ic_drizzle,
+                FEW_CLOUDS to R.drawable.ic_few_clouds,
+                FOG to R.drawable.ic_fog,
+                HEAVY_RAIN to R.drawable.ic_heavy_rain,
+                LIGHT_RAIN to R.drawable.ic_light_rain,
+                OVERCAST_CLOUDS to R.drawable.ic_overcast_clouds,
+                SCATTERED_CLOUDS to R.drawable.ic_scattered_clouds,
+                SNOW to R.drawable.ic_snow,
+                THUNDERSTORM to R.drawable.ic_thunderstorm
+        ).withDefault { R.drawable.ic_unknown }
+    }
 
     data class State(
             val loadingVisible: Boolean = false,
@@ -53,7 +69,7 @@ class CurrentWeatherViewModel @Inject constructor(
                                     temperature = it.value.temperatureCelsius?.let { getString(R.string.current__temperature).format(it) },
                                     pressure = it.value.pressureMilliBar?.let { getString(R.string.current__pressure).format(it) },
                                     descriptionText = it.value.descriptionText?.capitalize(),
-                                    descriptionIcon = R.drawable.ic_unknown, // TODO
+                                    descriptionIcon = descriptionIconMap.getValue(it.value.descriptionCode),
                                     additionalInfo = listOfNotNull(
                                             it.value.windSpeedKmph?.let { getString(R.string.current__wind_speed).format(it) },
                                             it.value.windDirectionDegrees?.let { getString(R.string.current__wind_direction).format(it) },

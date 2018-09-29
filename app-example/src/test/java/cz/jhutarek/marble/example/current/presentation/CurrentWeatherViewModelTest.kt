@@ -6,6 +6,7 @@ import cz.jhutarek.marble.arch.resources.domain.StringsUseCase
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherRepository.Query
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
 import cz.jhutarek.marble.example.current.model.CurrentWeather
+import cz.jhutarek.marble.example.current.model.CurrentWeather.DescriptionCode.*
 import cz.jhutarek.marble.example.current.presentation.CurrentWeatherViewModel.State
 import cz.jhutarek.marblearch.R
 import io.reactivex.Observable
@@ -37,7 +38,7 @@ internal class CurrentWeatherViewModelTest {
                 15.6,
                 123.4,
                 "any description",
-                CurrentWeather.DescriptionCode.UNKNOWN,
+                UNKNOWN,
                 21.0,
                 180.0,
                 ZonedDateTime.of(2018, 9, 9, 9, 9, 9, 9, ZoneId.systemDefault()),
@@ -155,6 +156,32 @@ internal class CurrentWeatherViewModelTest {
                         ),
                         Data.Loaded(anyQuery, anyCurrentWeather)
                 )
+        )
+    })
+
+    @ParameterizedTest
+    @ArgumentsSource(ShouldMapDescriptionCodesToIconsProvider::class)
+    fun `should map description codes to icons`(expectedResId: Int, descriptionCode: CurrentWeather.DescriptionCode) {
+        whenever(anyObserve(Unit)).thenReturn(Observable.just(Data.Loaded(Unit, anyCurrentWeather.copy(descriptionCode = descriptionCode))))
+
+        CurrentWeatherViewModel(anyObserve, anyGetString).states
+                .test()
+                .assertValue { it.descriptionIcon == expectedResId }
+    }
+
+    internal class ShouldMapDescriptionCodesToIconsProvider : BaseArgumentsProvider({
+        Stream.of(
+                arguments(R.drawable.ic_clear, CLEAR),
+                arguments(R.drawable.ic_fog, FOG),
+                arguments(R.drawable.ic_few_clouds, FEW_CLOUDS),
+                arguments(R.drawable.ic_scattered_clouds, SCATTERED_CLOUDS),
+                arguments(R.drawable.ic_overcast_clouds, OVERCAST_CLOUDS),
+                arguments(R.drawable.ic_drizzle, DRIZZLE),
+                arguments(R.drawable.ic_light_rain, LIGHT_RAIN),
+                arguments(R.drawable.ic_heavy_rain, HEAVY_RAIN),
+                arguments(R.drawable.ic_snow, SNOW),
+                arguments(R.drawable.ic_thunderstorm, THUNDERSTORM),
+                arguments(R.drawable.ic_unknown, UNKNOWN)
         )
     })
 }
