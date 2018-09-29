@@ -90,7 +90,7 @@ class CurrentWeatherSource @Inject constructor() : Source<CurrentWeatherReposito
                 .create(CurrentWeatherInterface::class.java)
     }
 
-    override fun request(query: CurrentWeatherRepository.Query): Maybe<CurrentWeather> = client.currentWeather(API_KEY, query.city, "cz", METRIC_UNITS)
+    override fun request(query: CurrentWeatherRepository.Query): Maybe<CurrentWeather> = client.currentWeather(API_KEY, query.city, "en", METRIC_UNITS)
             .map {
                 CurrentWeather(
                         timestamp = it.timestamp?.let { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneId.systemDefault()) },
