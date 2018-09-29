@@ -5,6 +5,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorTextSecondary">@color/colorTextSecondary</item>
 
         <item name="textAppearanceHeadline3">@style/TextAppearanceHeadline3</item>
         <item name="textAppearanceHeadline6">@style/TextAppearanceHeadline6</item>
