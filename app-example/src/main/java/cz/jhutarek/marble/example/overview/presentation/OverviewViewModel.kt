@@ -10,9 +10,12 @@ import cz.jhutarek.marble.arch.mvvm.model.State as MarbleState
 @Singleton
 class OverviewViewModel @Inject constructor(
         private val loadCurrentWeather: CurrentWeatherUseCase.Load
-) : ViewModel<OverviewViewModel.State>(State) {
+) : ViewModel<OverviewViewModel.State>(State()) {
 
-    object State : MarbleState
+    data class State(
+            val input: String? = null,
+            val refreshEnabled: Boolean = true
+    ) : MarbleState
 
     fun refresh() {
         Timber.d("Refresh")
