@@ -21,7 +21,12 @@ class OverviewViewModel @Inject constructor(
 
     init {
         observeCurrentWeather(Unit)
-                .map { statesRelay.value.copy(refreshEnabled = it is Data.Empty || it is Data.Loaded || it is Data.Error) }
+                .map {
+                    State(
+                            input = if (it is Data.Loaded) it.value.location else statesRelay.value.input,
+                            refreshEnabled = it is Data.Empty || it is Data.Loaded || it is Data.Error
+                    )
+                }
                 .subscribe(statesRelay)
     }
 

@@ -26,7 +26,10 @@ internal class OverviewViewModelTest {
     }
 
     companion object {
-        private val anyCurrentWeather = mock<CurrentWeather>()
+        private const val anyLocation = "any location"
+        private val anyCurrentWeather = mock<CurrentWeather> {
+            on { it.location } doReturn anyLocation
+        }
         private val anyError = IllegalStateException()
         private const val anyInput = "any input"
         private val anyObserve = mock<CurrentWeatherUseCase.Observe> {
@@ -60,6 +63,15 @@ internal class OverviewViewModelTest {
                 arguments(true, Data.Error(Unit, anyError))
         )
     })
+
+    @Test
+    fun `should map observed data to input state when loaded`() {
+        whenever(anyObserve.invoke(Unit)).thenReturn(Observable.just(Data.Loaded(Unit, anyCurrentWeather)))
+
+        OverviewViewModel(anyObserve, anyLoadCurrentWeather).states
+                .test()
+                .assertValueAt(0) { it.input == anyLocation }
+    }
 
     @Test
     fun `should execute load current weather use case on refresh`() {
