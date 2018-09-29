@@ -18,7 +18,7 @@
     </style>
 
     <style name="TextAppearanceHeadline6" parent="TextAppearance.MaterialComponents.Headline6">
-        <item name="fontFamily">@font/rubik_medium</item>
+        <item name="fontFamily">@font/rubik_regular</item>
         <item name="android:letterSpacing">0</item>
     </style>
 
