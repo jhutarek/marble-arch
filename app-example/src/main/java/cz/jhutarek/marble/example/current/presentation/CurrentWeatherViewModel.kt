@@ -51,7 +51,7 @@ class CurrentWeatherViewModel @Inject constructor(
                                     location = it.value.location,
                                     temperature = it.value.temperatureCelsius?.let { getString(R.string.current__temperature).format(it) },
                                     pressure = it.value.pressureMilliBar?.let { getString(R.string.current__pressure).format(it) },
-                                    description = it.value.description,
+                                    description = it.value.description?.capitalize(),
                                     additionalInfo = listOfNotNull(
                                             it.value.windSpeedKmph?.let { getString(R.string.current__wind_speed).format(it) },
                                             it.value.windDirectionDegrees?.let { getString(R.string.current__wind_direction).format(it) },

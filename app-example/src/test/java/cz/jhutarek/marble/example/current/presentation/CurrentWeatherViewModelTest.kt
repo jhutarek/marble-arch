@@ -144,7 +144,7 @@ internal class CurrentWeatherViewModelTest {
                                 location = anyCurrentWeather.location,
                                 temperature = anyTemperatureString.format(anyCurrentWeather.temperatureCelsius),
                                 pressure = anyPressureString.format(anyCurrentWeather.pressureMilliBar),
-                                description = anyCurrentWeather.description,
+                                description = anyCurrentWeather.description?.capitalize(),
                                 additionalInfo = listOf(
                                         anyWindSpeedString.format(anyCurrentWeather.windSpeedKmph),
                                         anyWindDirectionString.format(anyCurrentWeather.windDirectionDegrees),
