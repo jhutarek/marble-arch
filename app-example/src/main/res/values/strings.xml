@@ -8,9 +8,9 @@
     <string name="current__empty">No data</string>
     <string name="current__error">Error loading current weather:\n%s</string>
     <string name="current__temperature">%.1f °C</string>
-    <string name="current__pressure">%.1f mBar</string>
-    <string name="current__wind_speed">%.1f km/h</string>
-    <string name="current__wind_direction">%.1f°</string>
+    <string name="current__pressure">%.0f mBar</string>
+    <string name="current__wind_speed">%.0f km/h</string>
+    <string name="current__wind_direction">%.0f°</string>
     <string name="current__sunrise">Sunrise %s</string>
     <string name="current__sunset">Sunset %s</string>
     <string name="current__additional_info_separator">\u0020\u0020\u0020</string>
