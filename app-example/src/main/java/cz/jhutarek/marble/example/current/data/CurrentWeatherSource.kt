@@ -96,7 +96,7 @@ class CurrentWeatherSource @Inject constructor() : Source<CurrentWeatherReposito
                         location = it.location,
                         temperatureCelsius = it.mainParameters?.temperatureCelsius,
                         pressureMilliBar = it.mainParameters?.pressureMilliBar,
-                        description = it.weatherDescriptions?.first()?.long,
+                        descriptionText = it.weatherDescriptions?.first()?.long,
                         windSpeedKmph = it.wind?.speedKmph,
                         windDirectionDegrees = it.wind?.directionDegrees,
                         sunriseTimestamp = it.sun?.sunriseTimestamp?.let { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneId.systemDefault()) },

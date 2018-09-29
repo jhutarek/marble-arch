@@ -7,7 +7,7 @@ data class CurrentWeather(
         val location: String?,
         val temperatureCelsius: Double?,
         val pressureMilliBar: Double?,
-        val description: String?,
+        val descriptionText: String?,
         val windSpeedKmph: Double?,
         val windDirectionDegrees: Double?,
         val sunriseTimestamp: ZonedDateTime?,
