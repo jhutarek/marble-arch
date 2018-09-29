@@ -28,6 +28,7 @@ internal class OverviewViewModelTest {
     companion object {
         private val anyCurrentWeather = mock<CurrentWeather>()
         private val anyError = IllegalStateException()
+        private const val anyInput = "any input"
         private val anyObserve = mock<CurrentWeatherUseCase.Observe> {
             on { invoke(Unit) } doReturn Observable.never()
         }
@@ -65,5 +66,15 @@ internal class OverviewViewModelTest {
         OverviewViewModel(anyObserve, anyLoadCurrentWeather).refresh()
 
         verify(anyLoadCurrentWeather).invoke(Unit)
+    }
+
+    @Test
+    fun `should update input when set`() {
+        val viewModel = OverviewViewModel(anyObserve, anyLoadCurrentWeather)
+        val testObserver = viewModel.states.test()
+
+        viewModel.setInput(anyInput)
+
+        testObserver.assertValueAt(1) { it.input == anyInput }
     }
 }

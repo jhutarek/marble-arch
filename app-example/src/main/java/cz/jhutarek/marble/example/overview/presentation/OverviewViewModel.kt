@@ -34,6 +34,6 @@ class OverviewViewModel @Inject constructor(
     fun setInput(input: CharSequence) {
         Timber.d("Input: $input")
 
-        // TODO
+        statesRelay.accept { it.copy(input = input.toString()) }
     }
 }
