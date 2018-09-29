@@ -37,6 +37,7 @@ internal class CurrentWeatherViewModelTest {
                 15.6,
                 123.4,
                 "any description",
+                CurrentWeather.DescriptionCode.UNKNOWN,
                 21.0,
                 180.0,
                 ZonedDateTime.of(2018, 9, 9, 9, 9, 9, 9, ZoneId.systemDefault()),
@@ -96,7 +97,7 @@ internal class CurrentWeatherViewModelTest {
                                 location = null,
                                 temperature = null,
                                 pressure = null,
-                                description = null,
+                                descriptionText = null,
                                 additionalInfo = null
                         ),
                         Data.Empty(anyQuery)
@@ -112,7 +113,7 @@ internal class CurrentWeatherViewModelTest {
                                 location = null,
                                 temperature = null,
                                 pressure = null,
-                                description = null,
+                                descriptionText = null,
                                 additionalInfo = null
                         ),
                         Data.Loading(anyQuery)
@@ -128,7 +129,7 @@ internal class CurrentWeatherViewModelTest {
                                 location = null,
                                 temperature = null,
                                 pressure = null,
-                                description = null,
+                                descriptionText = null,
                                 additionalInfo = null
                         ),
                         Data.Error(anyQuery, anyError)
@@ -144,7 +145,7 @@ internal class CurrentWeatherViewModelTest {
                                 location = anyCurrentWeather.location,
                                 temperature = anyTemperatureString.format(anyCurrentWeather.temperatureCelsius),
                                 pressure = anyPressureString.format(anyCurrentWeather.pressureMilliBar),
-                                description = anyCurrentWeather.descriptionText?.capitalize(),
+                                descriptionText = anyCurrentWeather.descriptionText?.capitalize(),
                                 additionalInfo = listOf(
                                         anyWindSpeedString.format(anyCurrentWeather.windSpeedKmph),
                                         anyWindDirectionString.format(anyCurrentWeather.windDirectionDegrees),
