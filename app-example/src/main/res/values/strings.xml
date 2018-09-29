@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Marble Arch</string>
 
-    <string name="overview__city">City</string>
+    <string name="overview__input">City</string>
     <string name="overview__refresh">Refresh</string>
 
     <string name="current__empty">No data</string>

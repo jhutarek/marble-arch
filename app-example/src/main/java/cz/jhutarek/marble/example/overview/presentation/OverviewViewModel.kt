@@ -19,4 +19,10 @@ class OverviewViewModel @Inject constructor(
 
         loadCurrentWeather(Unit)
     }
+
+    fun setInput(input: CharSequence) {
+        Timber.d("Input: $input")
+
+        // TODO
+    }
 }
