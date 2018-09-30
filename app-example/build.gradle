@@ -29,7 +29,6 @@ android {
 
 dependencies {
     implementation project(':arch-mvvm')
-    implementation project(':arch-usecase')
     implementation project(':arch-repository')
     implementation project(':arch-resources')
 
