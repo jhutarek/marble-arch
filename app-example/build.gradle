@@ -31,7 +31,7 @@ dependencies {
     implementation project(':arch-mvvm')
     implementation project(':arch-usecase')
     implementation project(':arch-repository')
-    implementation project(':arch-resources-strings')
+    implementation project(':arch-resources')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
