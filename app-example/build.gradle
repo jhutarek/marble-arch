@@ -30,7 +30,7 @@ android {
 dependencies {
     implementation project(':arch-mvvm')
     implementation project(':arch-usecase')
-    implementation project(':arch-repository-core')
+    implementation project(':arch-repository')
     implementation project(':arch-resources-strings')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"

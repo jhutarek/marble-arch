@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app-example/app-example.iml" filepath="$PROJECT_DIR$/app-example/app-example.iml" />
       <module fileurl="file://$PROJECT_DIR$/arch-mvvm/arch-mvvm.iml" filepath="$PROJECT_DIR$/arch-mvvm/arch-mvvm.iml" />
-      <module fileurl="file://$PROJECT_DIR$/arch-repository-core/arch-repository-core.iml" filepath="$PROJECT_DIR$/arch-repository-core/arch-repository-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/arch-repository/arch-repository.iml" filepath="$PROJECT_DIR$/arch-repository/arch-repository.iml" />
       <module fileurl="file://$PROJECT_DIR$/arch-resources-strings/arch-resources-strings.iml" filepath="$PROJECT_DIR$/arch-resources-strings/arch-resources-strings.iml" />
       <module fileurl="file://$PROJECT_DIR$/arch-usecase/arch-usecase.iml" filepath="$PROJECT_DIR$/arch-usecase/arch-usecase.iml" />
       <module fileurl="file://$PROJECT_DIR$/marble-arch.iml" filepath="$PROJECT_DIR$/marble-arch.iml" />
