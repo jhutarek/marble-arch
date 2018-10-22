@@ -1,58 +1,50 @@
 package cz.jhutarek.marble.example.current.domain
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import cz.jhutarek.marble.arch.repository.model.Data
+import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherRepository.Query
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Load
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Observe
 import cz.jhutarek.marble.example.current.model.CurrentWeather
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import io.reactivex.Observable
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
 
-internal class CurrentWeatherUseCaseTest {
+internal class ObserveUseCaseTest : InstancePerClassStringSpec({
+    val repository = mockk<CurrentWeatherRepository>()
+    val city = "any city"
+    val repositoryData: Data<CurrentWeatherRepository.Query, CurrentWeather> = Data.Loading(Query(city))
+    val expectedMappedData = Data.Loading(Unit)
 
-    private val anyRepository = mock<CurrentWeatherRepository>()
+    val observe = Observe(repository)
 
-    @Nested
-    inner class ObserveUseCase {
-        private val anyCity = "any city"
-        private val anyRepositoryData: Data<CurrentWeatherRepository.Query, CurrentWeather> = Data.Loading(Query(anyCity))
-        private val expectedMappedData = Data.Loading(Unit)
-        private val observe = Observe(anyRepository)
+    "use case should execute observe on repository" {
+        every { repository.observe() } returns Observable.never()
 
-        @Test
-        fun `should execute observe on repository`() {
-            whenever(anyRepository.observe()).thenReturn(Observable.never())
+        observe(Unit)
 
-            observe(Unit)
-
-            verify(anyRepository).observe()
-        }
-
-        @Test
-        fun `should return mapped observable from repository`() {
-            whenever(anyRepository.observe()).doReturn(Observable.just(anyRepositoryData))
-
-            observe(Unit)
-                    .test()
-                    .assertValue(expectedMappedData)
-        }
+        verify { repository.observe() }
     }
 
-    @Nested
-    inner class LoadUseCase {
-        private val anyByCity = Load.ByCity("any city")
-        private val load = Load(anyRepository)
+    "use case should return mapped observable from repository" {
+        every { repository.observe() } returns Observable.just(repositoryData)
 
-        @Test
-        fun `should execute load on repository`() {
-            load(anyByCity)
-
-            verify(anyRepository).load(Query(anyByCity.city))
-        }
+        observe(Unit)
+            .test()
+            .assertValue(expectedMappedData)
     }
-}
+})
+
+internal class LoadUseCaseTest : InstancePerClassStringSpec({
+    val repository = mockk<CurrentWeatherRepository>(relaxUnitFun = true)
+    val byCity = Load.ByCity("any city")
+
+    val load = Load(repository)
+
+    "use case should execute load on repository" {
+        load(byCity)
+
+        verify { repository.load(Query(byCity.city)) }
+    }
+})

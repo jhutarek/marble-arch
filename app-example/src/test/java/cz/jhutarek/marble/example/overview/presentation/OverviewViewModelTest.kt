@@ -1,97 +1,74 @@
 package cz.jhutarek.marble.example.overview.presentation
 
-import com.nhaarman.mockitokotlin2.doReturn
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
 import cz.jhutarek.marble.arch.repository.model.Data
+import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Load
 import cz.jhutarek.marble.example.current.model.CurrentWeather
-import cz.jhutarek.marble.example.current.presentation.CurrentWeatherViewModelTest
+import io.kotlintest.data.forall
+import io.kotlintest.tables.row
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import io.reactivex.Observable
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtensionContext
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.Arguments.arguments
-import org.junit.jupiter.params.provider.ArgumentsProvider
-import org.junit.jupiter.params.provider.ArgumentsSource
-import java.util.stream.Stream
 
-internal class OverviewViewModelTest {
+internal class OverviewViewModelTest : InstancePerClassStringSpec({
+    val location = "location"
+    val currentWeather = mockk<CurrentWeather> {
+        every { this@mockk.location } returns location
+    }
+    val error = IllegalStateException()
+    val input = "any input"
+    val observe = mockk<CurrentWeatherUseCase.Observe> {
+        every { this@mockk(Unit) } returns Observable.never()
+    }
+    val loadCurrentWeather = mockk<CurrentWeatherUseCase.Load>(relaxUnitFun = true)
 
-    // TODO extract to separate file
-    abstract class BaseArgumentsProvider(private val provider: () -> Stream<out Arguments>) : ArgumentsProvider {
-        final override fun provideArguments(context: ExtensionContext): Stream<out Arguments> = provider()
+    "view model should execute observe use case in constructor" {
+        OverviewViewModel(observe, loadCurrentWeather)
+
+        verify { observe(Unit) }
     }
 
-    companion object {
-        private const val anyLocation = "any location"
-        private val anyCurrentWeather = mock<CurrentWeather> {
-            on { it.location } doReturn anyLocation
-        }
-        private val anyError = IllegalStateException()
-        private const val anyInput = "any input"
-        private val anyObserve = mock<CurrentWeatherUseCase.Observe> {
-            on { invoke(Unit) } doReturn Observable.never()
-        }
-        private val anyLoadCurrentWeather = mock<CurrentWeatherUseCase.Load>()
-    }
+    "view model should map observed data to refresh enabled state" {
+        forall(
+            row(true, Data.Empty(Unit)),
+            row(false, Data.Loading(Unit)),
+            row(true, Data.Loaded(Unit, currentWeather)),
+            row(true, Data.Error(Unit, error))
+        ) { expectedEnabled, data ->
+            every { observe(Unit) } returns Observable.just(data)
 
-    @Test
-    fun `should execute observe use case on construction`() {
-        OverviewViewModel(anyObserve, anyLoadCurrentWeather)
-
-        verify(anyObserve).invoke(Unit)
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(ShouldMapDataToRefreshEnabledStateProvider::class)
-    fun `should map observed data to refresh enabled state`(expectedEnabled: Boolean, data: Data<Unit, CurrentWeather>) {
-        whenever(anyObserve.invoke(Unit)).thenReturn(Observable.just(data))
-
-        OverviewViewModel(anyObserve, anyLoadCurrentWeather).states
+            OverviewViewModel(observe, loadCurrentWeather).states
                 .test()
                 .assertValueAt(0) { it.refreshEnabled == expectedEnabled }
+        }
     }
 
-    internal class ShouldMapDataToRefreshEnabledStateProvider : CurrentWeatherViewModelTest.BaseArgumentsProvider({
-        Stream.of(
-                arguments(true, Data.Empty(Unit)),
-                arguments(false, Data.Loading(Unit)),
-                arguments(true, Data.Loaded(Unit, anyCurrentWeather)),
-                arguments(true, Data.Error(Unit, anyError))
-        )
-    })
+    "view model should map observed data to input state when loaded" {
+        every { observe(Unit) } returns Observable.just(Data.Loaded(Unit, currentWeather))
 
-    @Test
-    fun `should map observed data to input state when loaded`() {
-        whenever(anyObserve.invoke(Unit)).thenReturn(Observable.just(Data.Loaded(Unit, anyCurrentWeather)))
-
-        OverviewViewModel(anyObserve, anyLoadCurrentWeather).states
-                .test()
-                .assertValueAt(0) { it.input == anyLocation }
+        OverviewViewModel(observe, loadCurrentWeather).states
+            .test()
+            .assertValueAt(0) { it.input == location }
     }
 
-    @Test
-    fun `should execute load current weather use case on refresh with current input`() {
-        OverviewViewModel(anyObserve, anyLoadCurrentWeather).apply {
-            setInput(anyInput)
+    "view model should execute load current weather use case on refresh with current input" {
+        OverviewViewModel(observe, loadCurrentWeather).apply {
+            setInput(input)
 
             refresh()
         }
 
-        verify(anyLoadCurrentWeather).invoke(Load.ByCity(anyInput))
+        verify { loadCurrentWeather(Load.ByCity(input)) }
     }
 
-    @Test
-    fun `should update input when set`() {
-        val viewModel = OverviewViewModel(anyObserve, anyLoadCurrentWeather)
+    "view model should update input when set" {
+        val viewModel = OverviewViewModel(observe, loadCurrentWeather)
         val testObserver = viewModel.states.test()
 
-        viewModel.setInput(anyInput)
+        viewModel.setInput(input)
 
-        testObserver.assertValueAt(1) { it.input == anyInput }
+        testObserver.assertValueAt(1) { it.input == input }
     }
-}
+})
