@@ -4,7 +4,5 @@ apply plugin: 'kotlin'
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    testApi 'io.kotlintest:kotlintest-runner-junit5:3.1.10'
-    testApi 'io.kotlintest:kotlintest-assertions:3.1.10'
-    testApi 'io.mockk:mockk:1.8.9'
+    implementation 'io.kotlintest:kotlintest-runner-junit5:3.1.10'
 }

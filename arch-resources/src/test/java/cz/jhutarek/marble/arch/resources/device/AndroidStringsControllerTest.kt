@@ -1,31 +1,30 @@
 package cz.jhutarek.marble.arch.resources.device
 
 import android.content.Context
-import com.nhaarman.mockitokotlin2.*
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
+import io.kotlintest.shouldBe
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 
-internal class AndroidStringsControllerTest {
+internal class AndroidStringsControllerTest : InstancePerClassStringSpec({
+    val string = "any string"
+    val resId = 123
+    val context = mockk<Context>()
 
-    private val anyString = "any string"
-    private val anyResId = 123
-    private val anyContext = mock<Context>()
+    val controller = AndroidStringsController(context)
 
-    private val controller = AndroidStringsController(anyContext)
+    "controller should invoke string method on context" {
+        every { context.getString(any()) } returns string
 
-    @Test
-    fun `should invoke string method on context`() {
-        whenever(anyContext.getString(any())).doReturn(anyString)
+        controller.getString(resId)
 
-        controller.getString(anyResId)
-
-        verify(anyContext).getString(anyResId)
+        verify { context.getString(resId) }
     }
 
-    @Test
-    fun `should return string from context`() {
-        whenever(anyContext.getString(anyResId)).thenReturn(anyString)
+    "controller should return string from context" {
+        every { context.getString(any()) } returns string
 
-        assertThat(controller.getString(anyResId)).isEqualTo(anyString)
+        controller.getString(resId) shouldBe string
     }
-}
+})
