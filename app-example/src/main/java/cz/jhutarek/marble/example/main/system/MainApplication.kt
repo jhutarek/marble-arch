@@ -14,13 +14,13 @@ class MainApplication : Application() {
 
     private class TagPrefixDebugTree(private val tagPrefix: String) : Timber.DebugTree() {
         override fun log(priority: Int, tag: String?, message: String, throwable: Throwable?) =
-                super.log(priority, tagPrefix + tag, message, throwable)
+            super.log(priority, tagPrefix + tag, message, throwable)
     }
 
     companion object {
         fun getInjector(context: Context?) = (context?.applicationContext as? MainApplication)
-                ?.component
-                ?: throw IllegalStateException("Cannot obtain injector when context is null")
+            ?.component
+            ?: throw IllegalStateException("Cannot obtain injector when context is null")
     }
 
     private lateinit var component: MainComponent
@@ -39,8 +39,8 @@ class MainApplication : Application() {
         Mvvm.initialize()
 
         component = DaggerMainComponent.builder()
-                .applicationContext(applicationContext)
-                .build()
+            .applicationContext(applicationContext)
+            .build()
 
         Timber.d("Application created")
     }

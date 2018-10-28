@@ -39,70 +39,81 @@ class CurrentWeatherSource @Inject constructor() : Source<CurrentWeatherReposito
     private interface CurrentWeatherInterface {
         @GET(CURRENT_WEATHER_PATH)
         fun currentWeather(
-                @Query(API_KEY_KEY) apiKey: String,
-                @Query(CITY_KEY) city: String,
-                @Query(LANGUAGE_KEY) language: String,
-                @Query(UNITS_KEY) units: String
+            @Query(API_KEY_KEY) apiKey: String,
+            @Query(CITY_KEY) city: String,
+            @Query(LANGUAGE_KEY) language: String,
+            @Query(UNITS_KEY) units: String
         ): Maybe<CurrentWeatherRemote>
     }
 
     @JsonClass(generateAdapter = true)
     data class CurrentWeatherRemote(
-            @Json(name = "dt") val timestamp: Long? = null,
-            @Json(name = "name") val location: String? = null,
-            @Json(name = "main") val mainParameters: MainParameters?,
-            @Json(name = "weather") val weatherDescriptions: List<WeatherDescription?>?,
-            @Json(name = "wind") val wind: Wind?,
-            @Json(name = "sys") val sun: Sun?
+        @Json(name = "dt") val timestamp: Long? = null,
+        @Json(name = "name") val location: String? = null,
+        @Json(name = "main") val mainParameters: MainParameters?,
+        @Json(name = "weather") val weatherDescriptions: List<WeatherDescription?>?,
+        @Json(name = "wind") val wind: Wind?,
+        @Json(name = "sys") val sun: Sun?
     ) {
         @JsonClass(generateAdapter = true)
         data class WeatherDescription(
-                @Json(name = "id") val code: Int? = null,
-                @Json(name = "main") val short: String? = null,
-                @Json(name = "description") val long: String? = null
+            @Json(name = "id") val code: Int? = null,
+            @Json(name = "main") val short: String? = null,
+            @Json(name = "description") val long: String? = null
         )
 
         @JsonClass(generateAdapter = true)
         data class MainParameters(
-                @Json(name = "temp") val temperatureCelsius: Double? = null,
-                @Json(name = "pressure") val pressureMilliBar: Double? = null
+            @Json(name = "temp") val temperatureCelsius: Double? = null,
+            @Json(name = "pressure") val pressureMilliBar: Double? = null
         )
 
         @JsonClass(generateAdapter = true)
         data class Wind(
-                @Json(name = "speed") val speedKmph: Double? = null,
-                @Json(name = "deg") val directionDegrees: Double? = null
+            @Json(name = "speed") val speedKmph: Double? = null,
+            @Json(name = "deg") val directionDegrees: Double? = null
         )
 
         @JsonClass(generateAdapter = true)
         data class Sun(
-                @Json(name = "sunrise") val sunriseTimestamp: Long? = null,
-                @Json(name = "sunset") val sunsetTimestamp: Long? = null
+            @Json(name = "sunrise") val sunriseTimestamp: Long? = null,
+            @Json(name = "sunset") val sunsetTimestamp: Long? = null
         )
     }
 
     private val client by lazy {
         Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(MoshiConverterFactory.create())
-                .build()
-                .create(CurrentWeatherInterface::class.java)
+            .baseUrl(BASE_URL)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create())
+            .build()
+            .create(CurrentWeatherInterface::class.java)
     }
 
-    override fun request(query: CurrentWeatherRepository.Query): Maybe<CurrentWeather> = client.currentWeather(API_KEY, query.city, "en", METRIC_UNITS)
+    override fun request(query: CurrentWeatherRepository.Query): Maybe<CurrentWeather> =
+        client.currentWeather(API_KEY, query.city, "en", METRIC_UNITS)
             .map {
                 CurrentWeather(
-                        timestamp = it.timestamp?.let { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneId.systemDefault()) },
-                        location = it.location,
-                        temperatureCelsius = it.mainParameters?.temperatureCelsius,
-                        pressureMilliBar = it.mainParameters?.pressureMilliBar,
-                        descriptionText = it.weatherDescriptions?.first()?.long,
-                        descriptionCode = it.weatherDescriptions?.first()?.code?.toDescriptionCode() ?: UNKNOWN,
-                        windSpeedKmph = it.wind?.speedKmph,
-                        windDirectionDegrees = it.wind?.directionDegrees,
-                        sunriseTimestamp = it.sun?.sunriseTimestamp?.let { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneId.systemDefault()) },
-                        sunsetTimestamp = it.sun?.sunsetTimestamp?.let { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneId.systemDefault()) }
+                    timestamp = it.timestamp?.let { ZonedDateTime.ofInstant(Instant.ofEpochSecond(it), ZoneId.systemDefault()) },
+                    location = it.location,
+                    temperatureCelsius = it.mainParameters?.temperatureCelsius,
+                    pressureMilliBar = it.mainParameters?.pressureMilliBar,
+                    descriptionText = it.weatherDescriptions?.first()?.long,
+                    descriptionCode = it.weatherDescriptions?.first()?.code?.toDescriptionCode() ?: UNKNOWN,
+                    windSpeedKmph = it.wind?.speedKmph,
+                    windDirectionDegrees = it.wind?.directionDegrees,
+                    sunriseTimestamp = it.sun?.sunriseTimestamp?.let {
+                        ZonedDateTime.ofInstant(
+                            Instant.ofEpochSecond(it),
+                            ZoneId.systemDefault()
+                        )
+                    },
+                    sunsetTimestamp = it.sun?.sunsetTimestamp?.let {
+                        ZonedDateTime.ofInstant(
+                            Instant.ofEpochSecond(it),
+                            ZoneId.systemDefault()
+                        )
+                    }
                 )
             }
             .doOnSuccess { Timber.d("Response: $it") }

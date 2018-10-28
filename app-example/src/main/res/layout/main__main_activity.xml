@@ -3,15 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="cz.jhutarek.marble.example.main.system.MainActivity"
-    >
+    tools:context="cz.jhutarek.marble.example.main.system.MainActivity">
 
     <fragment
         android:id="@+id/overviewFragment"
         android:name="cz.jhutarek.marble.example.overview.system.OverviewFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout="@layout/overview__overview_fragment"
-        />
+        tools:layout="@layout/overview__overview_fragment" />
 
 </FrameLayout>

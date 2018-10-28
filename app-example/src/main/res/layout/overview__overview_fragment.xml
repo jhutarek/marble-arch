@@ -3,20 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="wrap_content">
 
             <EditText
                 android:id="@+id/input"
@@ -27,8 +24,7 @@
                 android:imeOptions="actionSearch"
                 android:importantForAutofill="no"
                 android:inputType="textNoSuggestions|textCapWords"
-                android:textAppearance="?textAppearanceHeadline6"
-                />
+                android:textAppearance="?textAppearanceHeadline6" />
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -38,7 +34,6 @@
         android:name="cz.jhutarek.marble.example.current.system.CurrentWeatherFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout="@layout/current__current_weather_fragment"
-        />
+        tools:layout="@layout/current__current_weather_fragment" />
 
 </LinearLayout>

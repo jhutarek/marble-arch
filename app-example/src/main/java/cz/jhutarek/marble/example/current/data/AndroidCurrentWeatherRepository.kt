@@ -8,9 +8,9 @@ import javax.inject.Singleton
 
 @Singleton
 class AndroidCurrentWeatherRepository @Inject constructor(
-        source: CurrentWeatherSource,
-        cache: CurrentWeatherMemoryCache
+    source: CurrentWeatherSource,
+    cache: CurrentWeatherMemoryCache
 ) : BaseRepository<CurrentWeatherRepository.Query, CurrentWeather>(
-        source,
-        cache
+    source,
+    cache
 ), CurrentWeatherRepository

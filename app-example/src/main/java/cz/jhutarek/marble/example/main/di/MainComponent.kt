@@ -10,10 +10,12 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [
-    CurrentWeatherModule::class,
-    StringsModule::class
-])
+@Component(
+    modules = [
+        CurrentWeatherModule::class,
+        StringsModule::class
+    ]
+)
 interface MainComponent : OverviewComponent, CurrentWeatherComponent {
 
     @Component.Builder

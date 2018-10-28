@@ -11,24 +11,24 @@ import cz.jhutarek.marble.arch.mvvm.model.State as MarbleState
 
 @Singleton
 class OverviewViewModel @Inject constructor(
-        private val observeCurrentWeather: CurrentWeatherUseCase.Observe,
-        private val loadCurrentWeather: CurrentWeatherUseCase.Load
+    private val observeCurrentWeather: CurrentWeatherUseCase.Observe,
+    private val loadCurrentWeather: CurrentWeatherUseCase.Load
 ) : ViewModel<OverviewViewModel.State>(State()) {
 
     data class State(
-            val input: String? = null,
-            val refreshEnabled: Boolean = true
+        val input: String? = null,
+        val refreshEnabled: Boolean = true
     ) : MarbleState
 
     init {
         observeCurrentWeather(Unit)
-                .map {
-                    State(
-                            input = if (it is Data.Loaded) it.value.location else statesRelay.value.input,
-                            refreshEnabled = it is Data.Empty || it is Data.Loaded || it is Data.Error
-                    )
-                }
-                .subscribe(statesRelay)
+            .map {
+                State(
+                    input = if (it is Data.Loaded) it.value.location else statesRelay.value.input,
+                    refreshEnabled = it is Data.Empty || it is Data.Loaded || it is Data.Error
+                )
+            }
+            .subscribe(statesRelay)
     }
 
     fun refresh() {
