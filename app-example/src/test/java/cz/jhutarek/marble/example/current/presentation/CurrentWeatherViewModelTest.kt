@@ -41,7 +41,7 @@ internal class CurrentWeatherViewModelTest : InstancePerClassStringSpec({
     val sunsetString = "sunset string: %s"
     val additionalInfoSeparatorString = " | "
 
-    val observe = mockk<CurrentWeatherUseCase.Observe> {
+    val observeCurrentWeather = mockk<CurrentWeatherUseCase.Observe> {
         every { this@mockk(any()) } returns Observable.never<Data<Unit, CurrentWeather>>()
     }
     val getString = mockk<StringsUseCase.GetString> {
@@ -56,9 +56,9 @@ internal class CurrentWeatherViewModelTest : InstancePerClassStringSpec({
     }
 
     "view model should execute observe use case in constructor" {
-        CurrentWeatherViewModel(observe, getString)
+        CurrentWeatherViewModel(observeCurrentWeather, getString)
 
-        verify { observe(Unit) }
+        verify { observeCurrentWeather(Unit) }
     }
 
     "view model should map repository emissions to states" {
@@ -133,9 +133,9 @@ internal class CurrentWeatherViewModelTest : InstancePerClassStringSpec({
                 Data.Loaded(Unit, currentWeather)
             )
         ) { expectedState, data ->
-            every { observe(Unit) } returns Observable.just(data)
+            every { observeCurrentWeather(Unit) } returns Observable.just(data)
 
-            CurrentWeatherViewModel(observe, getString).states
+            CurrentWeatherViewModel(observeCurrentWeather, getString).states
                 .test()
                 .assertValue(expectedState)
         }
@@ -155,10 +155,10 @@ internal class CurrentWeatherViewModelTest : InstancePerClassStringSpec({
             row(R.drawable.ic_thunderstorm, THUNDERSTORM),
             row(R.drawable.ic_unknown, UNKNOWN)
         ) { expectedResId, descriptionCode ->
-            every { observe(Unit) } returns
+            every { observeCurrentWeather(Unit) } returns
                     Observable.just(Data.Loaded(Unit, currentWeather.copy(descriptionCode = descriptionCode)))
 
-            CurrentWeatherViewModel(observe, getString).states
+            CurrentWeatherViewModel(observeCurrentWeather, getString).states
                 .test()
                 .assertValue { it.descriptionIcon == expectedResId }
         }
