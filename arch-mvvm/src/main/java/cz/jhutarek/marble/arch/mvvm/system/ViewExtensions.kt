@@ -2,6 +2,7 @@ package cz.jhutarek.marble.arch.mvvm.system
 
 import android.widget.EditText
 
+// TODO test
 var EditText.textString: String?
     get() = text?.toString()
     set(value) {
