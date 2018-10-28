@@ -24,7 +24,7 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
     private val isUpdatingViewRelay = BehaviorRelay.createDefault(false)
 
     final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(layoutResId, container, false)
+        inflater.inflate(layoutResId, container, false)
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,9 +38,9 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
         super.onStart()
 
         statesDisposable = onBindStates(
-                viewModel.states
-                        .distinctUntilChanged()
-                        .observeOn(mainThread())
+            viewModel.states
+                .distinctUntilChanged()
+                .observeOn(mainThread())
         )
     }
 
@@ -65,8 +65,8 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
     }
 
     protected fun <T> Observable<T>.subscribeForViewModel(onValue: M.(event: T) -> Unit): Disposable =
-            this.withLatestFrom(isUpdatingViewRelay) { event, isUpdatingView -> Pair(event, isUpdatingView) }
-                    .filter { !it.second }
-                    .map { it.first }
-                    .subscribe { onValue(viewModel, it) }
+        this.withLatestFrom(isUpdatingViewRelay) { event, isUpdatingView -> Pair(event, isUpdatingView) }
+            .filter { !it.second }
+            .map { it.first }
+            .subscribe { onValue(viewModel, it) }
 }
