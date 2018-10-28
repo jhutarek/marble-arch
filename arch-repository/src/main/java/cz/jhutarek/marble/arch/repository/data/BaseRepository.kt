@@ -9,8 +9,8 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
 abstract class BaseRepository<Q : Any, D : Any>(
-        source: Source<Q, D>,
-        private vararg val caches: Cache<Q, D>
+    source: Source<Q, D>,
+    private vararg val caches: Cache<Q, D>
 ) : Repository<Q, D> {
 
     private data class IndexedResult<out D : Any>(val index: Int, val value: D)
@@ -22,32 +22,32 @@ abstract class BaseRepository<Q : Any, D : Any>(
 
     final override fun load(query: Q) {
         allSources
-                .mapIndexed { index, source ->
-                    source.request(query)
-                            .map { result -> IndexedResult(index, result) }
-                }
-                .let { Maybe.concat(it) }
-                .firstElement()
-                .flatMap { storeValueInCaches(query, it) }
-                .map { Data.Loaded(query, it) as Data<Q, D> }
-                .toSingle(Data.Empty(query))
-                .toObservable()
-                .startWith(Data.Loading(query))
-                .onErrorReturn { Data.Error(query, it) }
-                .subscribe(relay)
+            .mapIndexed { index, source ->
+                source.request(query)
+                    .map { result -> IndexedResult(index, result) }
+            }
+            .let { Maybe.concat(it) }
+            .firstElement()
+            .flatMap { storeValueInCaches(query, it) }
+            .map { Data.Loaded(query, it) as Data<Q, D> }
+            .toSingle(Data.Empty(query))
+            .toObservable()
+            .startWith(Data.Loading(query))
+            .onErrorReturn { Data.Error(query, it) }
+            .subscribe(relay)
     }
 
     final override fun update(query: Q) {
         Completable.concat(
-                listOf(
-                        clearCaches(query),
-                        Completable.fromAction { load(query) }
-                )
+            listOf(
+                clearCaches(query),
+                Completable.fromAction { load(query) }
+            )
         )
-                .toObservable<Data<Q, D>>()
-                .startWith(Data.Loading(query))
-                .onErrorReturn { Data.Error(query, it) }
-                .subscribe(relay)
+            .toObservable<Data<Q, D>>()
+            .startWith(Data.Loading(query))
+            .onErrorReturn { Data.Error(query, it) }
+            .subscribe(relay)
     }
 
     final override fun clearCaches(query: Q?): Completable {
@@ -59,11 +59,11 @@ abstract class BaseRepository<Q : Any, D : Any>(
     }
 
     private fun storeValueInCaches(query: Q, indexedResult: IndexedResult<D>): Maybe<D> = Completable.merge(
-            allSources
-                    .take(indexedResult.index)
-                    .filterIsInstance<Cache<Q, D>>()
-                    .map { it.store(query, indexedResult.value) }
+        allSources
+            .take(indexedResult.index)
+            .filterIsInstance<Cache<Q, D>>()
+            .map { it.store(query, indexedResult.value) }
     )
-            .toSingle { indexedResult.value }
-            .toMaybe()
+        .toSingle { indexedResult.value }
+        .toMaybe()
 }
