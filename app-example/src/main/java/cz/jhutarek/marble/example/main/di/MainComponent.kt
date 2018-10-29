@@ -5,6 +5,7 @@ import cz.jhutarek.marble.arch.resources.di.StringsModule
 import cz.jhutarek.marble.example.current.di.CurrentWeatherComponent
 import cz.jhutarek.marble.example.current.di.CurrentWeatherModule
 import cz.jhutarek.marble.example.overview.di.OverviewComponent
+import cz.jhutarek.marble.example.settings.di.SettingsComponent
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -16,7 +17,10 @@ import javax.inject.Singleton
         StringsModule::class
     ]
 )
-interface MainComponent : OverviewComponent, CurrentWeatherComponent {
+interface MainComponent :
+    OverviewComponent,
+    CurrentWeatherComponent,
+    SettingsComponent {
 
     @Component.Builder
     interface Builder {
