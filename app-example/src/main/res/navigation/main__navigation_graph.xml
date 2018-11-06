@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main__navigation_graph"
+    app:startDestination="@+id/overviewFragment">
+
+    <fragment
+        android:id="@+id/overviewFragment"
+        android:name="cz.jhutarek.marble.example.overview.system.OverviewFragment"
+        tools:layout="@layout/overview__overview_fragment">
+        <action
+            android:id="@+id/navigation__settings"
+            app:destination="@+id/settingsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="cz.jhutarek.marble.example.settings.system.SettingsFragment"
+        tools:layout="@layout/settings__settings_fragment" />
+
+</navigation>

@@ -6,4 +6,9 @@
         android:icon="@drawable/ic_search"
         android:title="@string/overview__refresh"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/settings"
+        android:title="@string/overview__settings"
+        app:showAsAction="never" />
 </menu>

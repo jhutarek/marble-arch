@@ -27,6 +27,7 @@ class OverviewFragment : MarbleFragment<OverviewViewModel, OverviewViewModel.Sta
 
     override fun onBindViews() {
         toolbar.menu.findItem(R.id.refresh).clicks().subscribeForViewModel { refresh() }
+        toolbar.menu.findItem(R.id.settings).clicks().subscribeForViewModel { showSettings() }
         input.textChanges().debounce(250, MILLISECONDS).subscribeForViewModel { setInput(it) }
         input.editorActions().filter { it == EditorInfo.IME_ACTION_SEARCH }.subscribeForViewModel { refresh() }
     }

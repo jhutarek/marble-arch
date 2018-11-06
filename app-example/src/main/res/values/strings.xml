@@ -4,6 +4,7 @@
 
     <string name="overview__input">City</string>
     <string name="overview__refresh">Refresh</string>
+    <string name="overview__settings">Settings</string>
 
     <string name="current__empty">No data</string>
     <string name="current__error">Error loading current weather:\n%s</string>

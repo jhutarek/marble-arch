@@ -37,6 +37,12 @@ class OverviewViewModel @Inject constructor(
         loadCurrentWeather(ByCity(statesRelay.value.input.orEmpty()))
     }
 
+    fun showSettings() {
+        logD("Show settings")
+
+        // TODO
+    }
+
     fun setInput(input: CharSequence) {
         logD("Input: $input")
 

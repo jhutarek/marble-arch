@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="cz.jhutarek.marble.example.main.system.MainActivity">
 
     <fragment
-        android:id="@+id/overviewFragment"
-        android:name="cz.jhutarek.marble.example.overview.system.OverviewFragment"
+        android:id="@+id/navigationHostFragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout="@layout/overview__overview_fragment" />
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/main__navigation_graph" />
 
 </FrameLayout>
