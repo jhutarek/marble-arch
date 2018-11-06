@@ -1,14 +1,14 @@
 package cz.jhutarek.marble.example.main.system
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import cz.jhutarek.marble.arch.mvvm.system.MarbleActivity
+import cz.jhutarek.marble.example.main.presentation.MainViewModel
 import cz.jhutarek.marblearch.R
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : MarbleActivity<MainViewModel, MainViewModel.State>() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override val layoutResId = R.layout.main__main_activity
 
-        setContentView(R.layout.main__main_activity)
+    override fun onInjection() {
+        MainApplication.getInjector(this).inject(this)
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import cz.jhutarek.marble.arch.resources.di.StringsModule
 import cz.jhutarek.marble.example.current.di.CurrentWeatherComponent
 import cz.jhutarek.marble.example.current.di.CurrentWeatherModule
+import cz.jhutarek.marble.example.main.system.MainActivity
 import cz.jhutarek.marble.example.overview.di.OverviewComponent
 import cz.jhutarek.marble.example.settings.di.SettingsComponent
 import dagger.BindsInstance
@@ -30,4 +31,6 @@ interface MainComponent :
 
         fun build(): MainComponent
     }
+
+    fun inject(activity: MainActivity)
 }
