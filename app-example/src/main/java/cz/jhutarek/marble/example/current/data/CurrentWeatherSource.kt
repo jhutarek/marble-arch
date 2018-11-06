@@ -2,8 +2,8 @@ package cz.jhutarek.marble.example.current.data
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import cz.jhutarek.marble.arch.log.infrastructure.logD
 import cz.jhutarek.marble.arch.log.infrastructure.logE
+import cz.jhutarek.marble.arch.log.infrastructure.logI
 import cz.jhutarek.marble.arch.repository.data.Source
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherRepository
 import cz.jhutarek.marble.example.current.model.CurrentWeather
@@ -117,9 +117,9 @@ class CurrentWeatherSource @Inject constructor() : Source<CurrentWeatherReposito
                     }
                 )
             }
-            .doOnSuccess { logD("Response: $it") }
+            .doOnSuccess { logI("Response: $it") }
             .doOnError { logE("Error: $it") }
-            .doOnComplete { logD("No response") }
+            .doOnComplete { logI("No response") }
             .subscribeOn(io())
 
     private fun Int.toDescriptionCode() = when (this) {

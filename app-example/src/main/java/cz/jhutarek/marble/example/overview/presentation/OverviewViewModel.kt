@@ -1,6 +1,6 @@
 package cz.jhutarek.marble.example.overview.presentation
 
-import cz.jhutarek.marble.arch.log.infrastructure.logD
+import cz.jhutarek.marble.arch.log.infrastructure.logI
 import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
 import cz.jhutarek.marble.arch.repository.model.Data
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
@@ -32,19 +32,19 @@ class OverviewViewModel @Inject constructor(
     }
 
     fun refresh() {
-        logD("Refresh")
+        logI("Refresh")
 
         loadCurrentWeather(ByCity(statesRelay.value.input.orEmpty()))
     }
 
     fun showSettings() {
-        logD("Show settings")
+        logI("Show settings")
 
         // TODO
     }
 
     fun setInput(input: CharSequence) {
-        logD("Input: $input")
+        logI("Input: $input")
 
         statesRelay.accept { it.copy(input = input.toString()) }
     }
