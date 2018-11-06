@@ -34,6 +34,13 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
     }
 
     @CallSuper
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        onInjection()
+    }
+
+    @CallSuper
     override fun onStart() {
         super.onStart()
 
@@ -51,6 +58,8 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
         statesDisposable?.dispose()
         statesDisposable = null
     }
+
+    protected abstract fun onInjection()
 
     protected open fun onInitializeViews() {}
 

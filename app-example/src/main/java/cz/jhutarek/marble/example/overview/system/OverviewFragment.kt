@@ -1,6 +1,5 @@
 package cz.jhutarek.marble.example.overview.system
 
-import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.editorActions
@@ -18,10 +17,7 @@ class OverviewFragment : MarbleFragment<OverviewViewModel, OverviewViewModel.Sta
 
     override val layoutResId = R.layout.overview__overview_fragment
 
-    // TODO use Android Dagger, move to base class
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onInjection() {
         MainApplication.getInjector(context).inject(this)
     }
 

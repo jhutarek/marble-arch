@@ -1,6 +1,5 @@
 package cz.jhutarek.marble.example.current.system
 
-import android.os.Bundle
 import androidx.core.view.isVisible
 import cz.jhutarek.marble.arch.mvvm.system.MarbleFragment
 import cz.jhutarek.marble.example.current.presentation.CurrentWeatherViewModel
@@ -13,10 +12,7 @@ class CurrentWeatherFragment : MarbleFragment<CurrentWeatherViewModel, CurrentWe
 
     override val layoutResId = R.layout.current__current_weather_fragment
 
-    // TODO use Android Dagger, move to base class
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onInjection() {
         MainApplication.getInjector(context).inject(this)
     }
 
