@@ -23,7 +23,13 @@ dependencies {
 
     implementation project(':arch-mvvm')
     implementation project(':arch-log')
+    api project(':arch-usecase')
 
     api "android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha07"
     api "android.arch.navigation:navigation-ui-ktx:1.0.0-alpha07"
+
+    testImplementation project(':arch-test')
+    testImplementation 'io.kotlintest:kotlintest-runner-junit5:3.1.10'
+    testImplementation 'io.kotlintest:kotlintest-assertions:3.1.10'
+    testImplementation 'io.mockk:mockk:1.8.9'
 }
