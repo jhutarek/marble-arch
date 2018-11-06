@@ -10,6 +10,6 @@ class MainActivity : MarbleActivity<MainViewModel, MainViewModel.State>() {
     override val layoutResId = R.layout.main__main_activity
 
     override fun onInjection() {
-        Injector.get(this).inject(this)
+        Injector(this).inject(this)
     }
 }

@@ -18,7 +18,7 @@ class OverviewFragment : MarbleFragment<OverviewViewModel, OverviewViewModel.Sta
     override val layoutResId = R.layout.overview__overview_fragment
 
     override fun onInjection() {
-        Injector.get(context).inject(this)
+        Injector(context).inject(this)
     }
 
     override fun onInitializeViews() {

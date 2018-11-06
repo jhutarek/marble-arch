@@ -11,7 +11,7 @@ abstract class MarbleApplication<C : Any> : Application() {
 
     protected object Injector {
         @Suppress("unchecked_cast")
-        fun <C : Any> get(context: Context?) =
+        operator fun <C : Any> invoke(context: Context?) =
             ((context?.applicationContext) as? MarbleApplication<C>)?.component
                 ?: throw IllegalStateException("Context must be an application context of type MarbleApplication with correct component type")
     }

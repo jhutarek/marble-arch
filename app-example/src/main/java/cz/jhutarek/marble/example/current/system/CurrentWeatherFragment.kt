@@ -13,7 +13,7 @@ class CurrentWeatherFragment : MarbleFragment<CurrentWeatherViewModel, CurrentWe
     override val layoutResId = R.layout.current__current_weather_fragment
 
     override fun onInjection() {
-        Injector.get(context).inject(this)
+        Injector(context).inject(this)
     }
 
     override fun onBindStates(states: Observable<CurrentWeatherViewModel.State>) = states.subscribeForViews {

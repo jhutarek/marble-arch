@@ -10,6 +10,6 @@ class SettingsFragment : MarbleFragment<SettingsViewModel, SettingsViewModel.Sta
     override val layoutResId = R.layout.settings__settings_fragment
 
     override fun onInjection() {
-        Injector.get(context).inject(this)
+        Injector(context).inject(this)
     }
 }

@@ -9,7 +9,7 @@ import cz.jhutarek.marble.example.main.di.MainComponent
 class MainApplication : MarbleApplication<MainComponent>() {
 
     object Injector {
-        fun get(context: Context?) = MarbleApplication.Injector.get<MainComponent>(context)
+        operator fun invoke(context: Context?) = MarbleApplication.Injector<MainComponent>(context)
     }
 
     override fun onCreateComponent() = DaggerMainComponent.builder()
