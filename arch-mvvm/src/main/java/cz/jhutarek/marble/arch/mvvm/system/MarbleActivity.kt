@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.annotation.CallSuper
 import androidx.appcompat.app.AppCompatActivity
 import com.jakewharton.rxrelay2.BehaviorRelay
+import cz.jhutarek.marble.arch.log.infrastructure.logD
 import cz.jhutarek.marble.arch.mvvm.model.State
 import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
 import io.reactivex.Observable
@@ -30,12 +31,15 @@ abstract class MarbleActivity<M : ViewModel<S>, S : State> : AppCompatActivity()
         onInjection()
         onInitializeViews()
         onBindViews()
+
+        logD("Activity created")
     }
 
     @CallSuper
     override fun onStart() {
         super.onStart()
 
+        logD("Bind states")
         statesDisposable = onBindStates(
             viewModel.states
                 .distinctUntilChanged()
@@ -47,6 +51,7 @@ abstract class MarbleActivity<M : ViewModel<S>, S : State> : AppCompatActivity()
     override fun onStop() {
         super.onStop()
 
+        logD("Unbind states")
         statesDisposable?.dispose()
         statesDisposable = null
     }

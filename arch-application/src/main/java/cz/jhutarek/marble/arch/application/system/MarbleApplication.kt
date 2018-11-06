@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.squareup.leakcanary.LeakCanary
 import cz.jhutarek.marble.arch.log.infrastructure.Logger
+import cz.jhutarek.marble.arch.log.infrastructure.logD
 import cz.jhutarek.marble.arch.mvvm.system.Mvvm
 
 // TODO test
@@ -30,6 +31,8 @@ abstract class MarbleApplication<C : Any> : Application() {
         onInitialize()
 
         component = onCreateComponent()
+
+        logD("Application created")
     }
 
     protected open fun onInitialize() {}

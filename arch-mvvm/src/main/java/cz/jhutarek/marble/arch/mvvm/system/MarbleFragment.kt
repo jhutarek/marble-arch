@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
 import com.jakewharton.rxrelay2.BehaviorRelay
+import cz.jhutarek.marble.arch.log.infrastructure.logD
 import cz.jhutarek.marble.arch.mvvm.model.State
 import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
 import io.reactivex.Observable
@@ -39,12 +40,15 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
         super.onCreate(savedInstanceState)
 
         onInjection()
+
+        logD("Fragment created")
     }
 
     @CallSuper
     override fun onStart() {
         super.onStart()
 
+        logD("Bind states")
         statesDisposable = onBindStates(
             viewModel.states
                 .distinctUntilChanged()
@@ -56,6 +60,7 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
     override fun onStop() {
         super.onStop()
 
+        logD("Unbind states")
         statesDisposable?.dispose()
         statesDisposable = null
     }
