@@ -12,7 +12,7 @@ class AndroidNavigationController @Inject constructor() : NavigationController {
 
     private val destinationsRelay = PublishRelay.create<Int>()
 
-    override fun observe(): Observable<Int> = destinationsRelay.hide()
+    fun observe(): Observable<Int> = destinationsRelay.hide()
 
     override fun navigateTo(destination: Int) {
         logI("Navigate to: $destination")

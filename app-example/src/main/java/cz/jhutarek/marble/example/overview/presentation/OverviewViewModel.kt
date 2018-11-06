@@ -2,17 +2,20 @@ package cz.jhutarek.marble.example.overview.presentation
 
 import cz.jhutarek.marble.arch.log.infrastructure.logI
 import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
+import cz.jhutarek.marble.arch.navigation.domain.NavigationUseCase
 import cz.jhutarek.marble.arch.repository.model.Data
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Load.ByCity
+import cz.jhutarek.marblearch.R
 import javax.inject.Inject
 import javax.inject.Singleton
 import cz.jhutarek.marble.arch.mvvm.model.State as MarbleState
 
 @Singleton
 class OverviewViewModel @Inject constructor(
-    private val observeCurrentWeather: CurrentWeatherUseCase.Observe,
-    private val loadCurrentWeather: CurrentWeatherUseCase.Load
+    observeCurrentWeather: CurrentWeatherUseCase.Observe,
+    private val loadCurrentWeather: CurrentWeatherUseCase.Load,
+    private val navigateTo: NavigationUseCase.NavigateTo
 ) : ViewModel<OverviewViewModel.State>(State()) {
 
     data class State(
@@ -40,7 +43,7 @@ class OverviewViewModel @Inject constructor(
     fun showSettings() {
         logI("Show settings")
 
-        // TODO
+        navigateTo(R.id.navigation__settings)
     }
 
     fun setInput(input: CharSequence) {
