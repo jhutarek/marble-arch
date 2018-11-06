@@ -1,10 +1,10 @@
 package cz.jhutarek.marble.example.overview.presentation
 
+import cz.jhutarek.marble.arch.log.infrastructure.logD
 import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
 import cz.jhutarek.marble.arch.repository.model.Data
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Load.ByCity
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 import cz.jhutarek.marble.arch.mvvm.model.State as MarbleState
@@ -32,13 +32,13 @@ class OverviewViewModel @Inject constructor(
     }
 
     fun refresh() {
-        Timber.d("Refresh")
+        logD("Refresh")
 
         loadCurrentWeather(ByCity(statesRelay.value.input.orEmpty()))
     }
 
     fun setInput(input: CharSequence) {
-        Timber.d("Input: $input")
+        logD("Input: $input")
 
         statesRelay.accept { it.copy(input = input.toString()) }
     }

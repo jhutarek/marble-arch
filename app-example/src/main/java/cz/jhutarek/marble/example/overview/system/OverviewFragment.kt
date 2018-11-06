@@ -6,7 +6,7 @@ import com.jakewharton.rxbinding2.widget.editorActions
 import com.jakewharton.rxbinding2.widget.textChanges
 import cz.jhutarek.marble.arch.mvvm.system.MarbleFragment
 import cz.jhutarek.marble.arch.mvvm.system.textString
-import cz.jhutarek.marble.example.main.system.MainApplication
+import cz.jhutarek.marble.example.main.system.MainApplication.Injector
 import cz.jhutarek.marble.example.overview.presentation.OverviewViewModel
 import cz.jhutarek.marblearch.R
 import io.reactivex.Observable
@@ -18,7 +18,7 @@ class OverviewFragment : MarbleFragment<OverviewViewModel, OverviewViewModel.Sta
     override val layoutResId = R.layout.overview__overview_fragment
 
     override fun onInjection() {
-        MainApplication.getInjector(context).inject(this)
+        Injector.get(context).inject(this)
     }
 
     override fun onInitializeViews() {

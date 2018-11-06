@@ -2,6 +2,8 @@ package cz.jhutarek.marble.example.current.data
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import cz.jhutarek.marble.arch.log.infrastructure.logD
+import cz.jhutarek.marble.arch.log.infrastructure.logE
 import cz.jhutarek.marble.arch.repository.data.Source
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherRepository
 import cz.jhutarek.marble.example.current.model.CurrentWeather
@@ -16,7 +18,6 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -116,9 +117,9 @@ class CurrentWeatherSource @Inject constructor() : Source<CurrentWeatherReposito
                     }
                 )
             }
-            .doOnSuccess { Timber.d("Response: $it") }
-            .doOnError { Timber.e("Error: $it") }
-            .doOnComplete { Timber.d("No response") }
+            .doOnSuccess { logD("Response: $it") }
+            .doOnError { logE("Error: $it") }
+            .doOnComplete { logD("No response") }
             .subscribeOn(io())
 
     private fun Int.toDescriptionCode() = when (this) {

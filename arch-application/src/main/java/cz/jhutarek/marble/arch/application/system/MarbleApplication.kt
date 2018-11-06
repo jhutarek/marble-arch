@@ -3,14 +3,15 @@ package cz.jhutarek.marble.arch.application.system
 import android.app.Application
 import android.content.Context
 import com.squareup.leakcanary.LeakCanary
+import cz.jhutarek.marble.arch.log.infrastructure.Logger
+import cz.jhutarek.marble.arch.mvvm.system.Mvvm
 
 // TODO test
 abstract class MarbleApplication<C : Any> : Application() {
 
-    companion object {
-        @JvmStatic
+    protected object Injector {
         @Suppress("unchecked_cast")
-        protected fun <C : Any> getInjector(context: Context?) =
+        fun <C : Any> get(context: Context?) =
             ((context?.applicationContext) as? MarbleApplication<C>)?.component
                 ?: throw IllegalStateException("Context must be an application context of type MarbleApplication with correct component type")
     }
@@ -24,6 +25,8 @@ abstract class MarbleApplication<C : Any> : Application() {
         if (LeakCanary.isInAnalyzerProcess(this)) return
         LeakCanary.install(this)
 
+        Logger.initialize(logTag)
+        Mvvm.initialize()
         onInitialize()
 
         component = onCreateComponent()
@@ -32,4 +35,6 @@ abstract class MarbleApplication<C : Any> : Application() {
     protected open fun onInitialize() {}
 
     protected abstract fun onCreateComponent(): C
+
+    protected open val logTag = "*Mrbl:"
 }

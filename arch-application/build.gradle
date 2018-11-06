@@ -21,7 +21,8 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
-    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation project(':arch-mvvm')
+    implementation project(':arch-log')
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
