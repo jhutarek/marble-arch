@@ -15,6 +15,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
+        MainModule::class,
         CurrentWeatherModule::class,
         StringsModule::class,
         NavigationModule::class
