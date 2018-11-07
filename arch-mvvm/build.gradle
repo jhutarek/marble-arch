@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group = 'com.github.jhutarek.arch-mvvm'
+group = 'com.github.jhutarek.marble-arch.arch-mvvm'
 
 android {
     compileSdkVersion 28
