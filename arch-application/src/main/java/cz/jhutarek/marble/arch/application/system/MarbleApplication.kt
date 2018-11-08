@@ -26,7 +26,7 @@ abstract class MarbleApplication<C : Any> : Application() {
         if (LeakCanary.isInAnalyzerProcess(this)) return
         LeakCanary.install(this)
 
-        Logger.initialize(logTag)
+        Logger.initialize(isDebug, logTag)
         Mvvm.initialize()
         onInitialize()
 
@@ -40,4 +40,6 @@ abstract class MarbleApplication<C : Any> : Application() {
     protected abstract fun onCreateComponent(): C
 
     protected open val logTag = "*Mrbl:"
+
+    protected abstract val isDebug: Boolean
 }

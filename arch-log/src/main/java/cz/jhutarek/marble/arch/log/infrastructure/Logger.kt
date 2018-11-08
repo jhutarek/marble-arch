@@ -1,6 +1,5 @@
 package cz.jhutarek.marble.arch.log.infrastructure
 
-import cz.jhutarek.marble.arch.log.BuildConfig
 import timber.log.Timber
 
 object Logger {
@@ -10,10 +9,8 @@ object Logger {
             super.log(priority, tagPrefix + tag, message, throwable)
     }
 
-    fun initialize(tagPrefix: String) {
-        if (BuildConfig.DEBUG) {
-            Timber.plant(TagPrefixDebugTree(tagPrefix))
-        }
+    fun initialize(isDebug: Boolean, tagPrefix: String) {
+        if (isDebug) Timber.plant(TagPrefixDebugTree(tagPrefix))
     }
 }
 
