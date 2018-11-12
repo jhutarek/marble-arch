@@ -224,9 +224,9 @@ internal class BaseRepositoryTest : InstancePerClassStringSpec() {
             }
         }
 
-        "repository should subscribe to clear all caches even if result completable is not subscribed" {
+        "repository should subscribe to clear all caches" {
             MockRepositoryBuilder(listOf(Value(), Empty(), Empty())).run {
-                repository.clearCaches(query)
+                repository.clearCaches(query).subscribe()
 
                 cacheClearSpies.forAll { verify { it.subscribe(any<CompletableObserver>()) } }
             }

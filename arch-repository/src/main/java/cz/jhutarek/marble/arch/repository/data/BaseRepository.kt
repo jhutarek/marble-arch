@@ -6,7 +6,6 @@ import cz.jhutarek.marble.arch.repository.model.Data
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
 
 abstract class BaseRepository<Q : Any, D : Any>(
     source: Source<Q, D>,
@@ -50,13 +49,9 @@ abstract class BaseRepository<Q : Any, D : Any>(
             .subscribe(relay)
     }
 
-    final override fun clearCaches(query: Q?): Completable {
-        val resultSubject = PublishSubject.create<Unit>()
-
-        Completable.merge(caches.map { it.clear(query) }).toObservable<Unit>().subscribe(resultSubject)
-
-        return resultSubject.hide().ignoreElements()
-    }
+    final override fun clearCaches(query: Q?): Completable = Completable.merge(caches.map { it.clear(query) })
+        .toObservable<Unit>()
+        .ignoreElements()
 
     private fun storeValueInCaches(query: Q, indexedResult: IndexedResult<D>): Maybe<D> = Completable.merge(
         allSources
