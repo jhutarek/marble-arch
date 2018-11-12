@@ -8,9 +8,9 @@ interface Repository<Q : Any, D : Any> {
 
     fun observe(): Observable<Data<Q, D>>
 
-    fun load(query: Q)
+    fun load(query: Q) // TODO return Completable
 
-    fun update(query: Q)
+    fun update(query: Q) // TODO return Completable
 
     fun clearCaches(query: Q? = null): Completable
 }
