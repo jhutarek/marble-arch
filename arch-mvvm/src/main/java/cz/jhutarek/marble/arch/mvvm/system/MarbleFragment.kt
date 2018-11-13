@@ -12,6 +12,7 @@ import cz.jhutarek.marble.arch.mvvm.model.State
 import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.withLatestFrom
 import javax.inject.Inject
@@ -23,6 +24,7 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
     @Inject protected lateinit var viewModel: M
     protected abstract val layoutResId: Int
     private var statesDisposable: Disposable? = null
+    private var viewsDisposable: CompositeDisposable? = null
     private val isUpdatingViewRelay = BehaviorRelay.createDefault(false)
 
     final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -32,7 +34,6 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         onInitializeViews()
-        onBindViews()
     }
 
     @CallSuper
@@ -47,6 +48,9 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
     @CallSuper
     override fun onStart() {
         super.onStart()
+
+        logD("Bind views")
+        viewsDisposable = CompositeDisposable(onBindViews())
 
         logD("Bind states")
         statesDisposable = onBindStates(
@@ -63,6 +67,10 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
         logD("Unbind states")
         statesDisposable?.dispose()
         statesDisposable = null
+
+        logD("Unbind views")
+        viewsDisposable?.clear()
+        viewsDisposable = null
     }
 
     protected abstract fun onInjection()
@@ -71,7 +79,7 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
 
     protected open fun onBindStates(states: Observable<S>): Disposable = Observable.never<Unit>().subscribe()
 
-    protected open fun onBindViews() {}
+    protected open fun onBindViews(): List<Disposable> = listOf()
 
     protected fun Observable<S>.subscribeForViews(onValue: (S) -> Unit): Disposable = subscribe {
         isUpdatingViewRelay.accept(true)

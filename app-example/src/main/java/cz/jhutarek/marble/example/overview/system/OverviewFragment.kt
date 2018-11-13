@@ -25,12 +25,12 @@ class OverviewFragment : MarbleFragment<OverviewViewModel, OverviewViewModel.Sta
         toolbar.inflateMenu(R.menu.overview__overview_menu)
     }
 
-    override fun onBindViews() {
-        toolbar.menu.findItem(R.id.refresh).clicks().subscribeForViewModel { refresh() }
-        toolbar.menu.findItem(R.id.settings).clicks().subscribeForViewModel { showSettings() }
-        input.textChanges().debounce(250, MILLISECONDS).subscribeForViewModel { setInput(it) }
+    override fun onBindViews() = listOf(
+        toolbar.menu.findItem(R.id.refresh).clicks().subscribeForViewModel { refresh() },
+        toolbar.menu.findItem(R.id.settings).clicks().subscribeForViewModel { showSettings() },
+        input.textChanges().debounce(250, MILLISECONDS).subscribeForViewModel { setInput(it) },
         input.editorActions().filter { it == EditorInfo.IME_ACTION_SEARCH }.subscribeForViewModel { refresh() }
-    }
+    )
 
     override fun onBindStates(states: Observable<OverviewViewModel.State>) = states.subscribeForViews {
         toolbar.menu.findItem(R.id.refresh).isEnabled = it.refreshEnabled
