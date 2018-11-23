@@ -5,8 +5,8 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
 @Module
-abstract class SettingsModule {
+interface SettingsModule {
 
     @ContributesAndroidInjector
-    abstract fun settingsFragment(): SettingsFragment
+    fun settingsFragment(): SettingsFragment
 }

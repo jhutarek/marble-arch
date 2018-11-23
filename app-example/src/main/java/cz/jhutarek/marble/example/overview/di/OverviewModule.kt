@@ -5,8 +5,8 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
 @Module
-abstract class OverviewModule {
+interface OverviewModule {
 
     @ContributesAndroidInjector
-    abstract fun overviewFragment(): OverviewFragment
+    fun overviewFragment(): OverviewFragment
 }

@@ -13,13 +13,13 @@ import javax.inject.Singleton
 class MainModule {
 
     @Module
-    abstract class AbstractMainModule {
+    interface AbstractMainModule {
         @ContributesAndroidInjector
-        abstract fun mainActivity(): MainActivity
+        fun mainActivity(): MainActivity
     }
 
     @Provides
     @Singleton
-    fun provideNavigationMainActivityDelegate(navigationController: AndroidNavigationController) =
+    fun navigationActivityDelegate(navigationController: AndroidNavigationController) =
         NavigationActivityDelegate(navigationController, R.id.navigationHostFragment)
 }

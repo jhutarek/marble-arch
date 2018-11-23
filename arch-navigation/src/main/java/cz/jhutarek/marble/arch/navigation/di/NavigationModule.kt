@@ -6,8 +6,8 @@ import dagger.Binds
 import dagger.Module
 
 @Module
-abstract class NavigationModule {
+interface NavigationModule {
 
     @Binds
-    abstract fun provideNavigationController(controller: AndroidNavigationController): NavigationController
+    fun navigationController(controller: AndroidNavigationController): NavigationController
 }

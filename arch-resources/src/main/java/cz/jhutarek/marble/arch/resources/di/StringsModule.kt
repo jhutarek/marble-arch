@@ -6,8 +6,8 @@ import dagger.Binds
 import dagger.Module
 
 @Module
-abstract class StringsModule {
+interface StringsModule {
 
     @Binds
-    abstract fun provideStringsController(controller: AndroidStringsController): StringsController
+    fun stringsController(controller: AndroidStringsController): StringsController
 }

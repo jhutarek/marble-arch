@@ -8,11 +8,11 @@ import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
 @Module
-abstract class CurrentWeatherModule {
+interface CurrentWeatherModule {
 
     @ContributesAndroidInjector
-    abstract fun currentWeatherFragment(): CurrentWeatherFragment
+    fun currentWeatherFragment(): CurrentWeatherFragment
 
     @Binds
-    abstract fun bindCurrentWeatherRepository(androidCurrentWeatherRepository: AndroidCurrentWeatherRepository): CurrentWeatherRepository
+    fun currentWeatherRepository(androidCurrentWeatherRepository: AndroidCurrentWeatherRepository): CurrentWeatherRepository
 }
