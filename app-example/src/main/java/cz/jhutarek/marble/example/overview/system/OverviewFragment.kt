@@ -6,7 +6,6 @@ import com.jakewharton.rxbinding2.widget.editorActions
 import com.jakewharton.rxbinding2.widget.textChanges
 import cz.jhutarek.marble.arch.mvvm.system.MarbleFragment
 import cz.jhutarek.marble.arch.mvvm.system.textString
-import cz.jhutarek.marble.example.main.system.MainApplication.Injector
 import cz.jhutarek.marble.example.overview.presentation.OverviewViewModel
 import cz.jhutarek.marblearch.R
 import io.reactivex.Observable
@@ -16,10 +15,6 @@ import java.util.concurrent.TimeUnit.MILLISECONDS
 class OverviewFragment : MarbleFragment<OverviewViewModel, OverviewViewModel.State>() {
 
     override val layoutResId = R.layout.overview__overview_fragment
-
-    override fun onInjection() {
-        Injector(context).inject(this)
-    }
 
     override fun onInitializeViews() {
         toolbar.inflateMenu(R.menu.overview__overview_menu)

@@ -7,6 +7,7 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import cz.jhutarek.marble.arch.log.infrastructure.logD
 import cz.jhutarek.marble.arch.mvvm.model.State
 import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
+import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.disposables.CompositeDisposable
@@ -30,7 +31,7 @@ abstract class MarbleActivity<M : ViewModel<S>, S : State> : AppCompatActivity()
 
         setContentView(layoutResId)
 
-        onInjection()
+        AndroidInjection.inject(this)
         onInitializeViews()
 
         logD("Activity created")
@@ -63,8 +64,6 @@ abstract class MarbleActivity<M : ViewModel<S>, S : State> : AppCompatActivity()
         viewsDisposable?.clear()
         viewsDisposable = null
     }
-
-    protected abstract fun onInjection()
 
     protected open fun onInitializeViews() {}
 

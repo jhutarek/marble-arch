@@ -1,24 +1,25 @@
 package cz.jhutarek.marble.arch.application.system
 
+import android.app.Activity
 import android.app.Application
-import android.content.Context
+import androidx.fragment.app.Fragment
 import com.squareup.leakcanary.LeakCanary
+import cz.jhutarek.marble.arch.application.di.MarbleApplicationComponent
 import cz.jhutarek.marble.arch.log.infrastructure.Logger
 import cz.jhutarek.marble.arch.log.infrastructure.logD
 import cz.jhutarek.marble.arch.mvvm.system.Mvvm
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.HasActivityInjector
+import dagger.android.support.HasSupportFragmentInjector
+import javax.inject.Inject
 
 // TODO test
-abstract class MarbleApplication<C : Any> : Application() {
+abstract class MarbleApplication : Application(), HasActivityInjector, HasSupportFragmentInjector {
 
-    protected object Injector {
-        @Suppress("unchecked_cast")
-        operator fun <C : Any> invoke(context: Context?) =
-            ((context?.applicationContext) as? MarbleApplication<C>)?.component
-                ?: throw IllegalStateException("Context must be an application context of type MarbleApplication with correct component type")
-    }
+    @Inject internal lateinit var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
+    @Inject internal lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
 
-    lateinit var component: C
-        private set
+    internal lateinit var component: MarbleApplicationComponent
 
     override fun onCreate() {
         super.onCreate()
@@ -31,13 +32,18 @@ abstract class MarbleApplication<C : Any> : Application() {
         onInitialize()
 
         component = onCreateComponent()
+            .also { it.inject(this) }
 
         logD("Application created")
     }
 
+    final override fun activityInjector() = dispatchingActivityInjector
+
+    final override fun supportFragmentInjector() = dispatchingFragmentInjector
+
     protected open fun onInitialize() {}
 
-    protected abstract fun onCreateComponent(): C
+    protected abstract fun onCreateComponent(): MarbleApplicationComponent
 
     protected open val logTag = "*Mrbl:"
 

@@ -9,6 +9,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
         classpath "de.mannodermaus.gradle.plugins:android-junit5:1.3.1.1"
+        classpath 'com.android.tools.build.jetifier:jetifier-processor:1.0.0-beta02' // workaround for https://issuetracker.google.com/issues/115738511
     }
 }
 

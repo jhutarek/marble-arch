@@ -10,6 +10,7 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import cz.jhutarek.marble.arch.log.infrastructure.logD
 import cz.jhutarek.marble.arch.mvvm.model.State
 import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
+import dagger.android.support.AndroidSupportInjection
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers.mainThread
 import io.reactivex.disposables.CompositeDisposable
@@ -40,7 +41,7 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        onInjection()
+        AndroidSupportInjection.inject(this)
 
         logD("Fragment created")
     }
@@ -72,8 +73,6 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
         viewsDisposable?.clear()
         viewsDisposable = null
     }
-
-    protected abstract fun onInjection()
 
     protected open fun onInitializeViews() {}
 
