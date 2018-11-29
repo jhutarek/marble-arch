@@ -1,9 +1,12 @@
 package cz.jhutarek.marble.arch.navigation.device
 
+import cz.jhutarek.marble.arch.navigation.model.Destination
+import cz.jhutarek.marble.arch.navigation.model.Destination.Type.POP_TO_PREVIOUS
 import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
 
 internal class AndroidNavigationControllerTest : InstancePerClassStringSpec({
-    val destination = 123
+    val destinationId = 123
+    val destination = Destination(456, POP_TO_PREVIOUS)
 
     val controller = AndroidNavigationController()
 
@@ -30,8 +33,8 @@ internal class AndroidNavigationControllerTest : InstancePerClassStringSpec({
     "observe observable should emit value passed to notify navigation executed" {
         val testObservable = controller.observe().test()
 
-        controller.notifyNavigationExecuted(destination)
+        controller.notifyNavigationExecuted(destinationId)
 
-        testObservable.assertValue(destination)
+        testObservable.assertValue(destinationId)
     }
 })

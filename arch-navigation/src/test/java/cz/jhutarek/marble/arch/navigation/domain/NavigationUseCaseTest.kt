@@ -1,5 +1,7 @@
 package cz.jhutarek.marble.arch.navigation.domain
 
+import cz.jhutarek.marble.arch.navigation.model.Destination
+import cz.jhutarek.marble.arch.navigation.model.Destination.Type.POP_TO_PREVIOUS
 import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
 import io.mockk.every
 import io.mockk.mockk
@@ -8,14 +10,21 @@ import io.reactivex.Observable
 
 internal class NavigateUseCaseTest : InstancePerClassStringSpec({
     val controller = mockk<NavigationController>(relaxUnitFun = true)
-    val destination = 123
+    val destinationId = 123
+    val destinationType = POP_TO_PREVIOUS
 
     val navigate = NavigationUseCase.Navigate(controller)
 
-    "use case should execute navigate on controller" {
-        navigate(destination)
+    "use case should execute navigate on controller with default type" {
+        navigate(destinationId)
 
-        verify { controller.navigate(destination) }
+        verify { controller.navigate(Destination(destinationId)) }
+    }
+
+    "use case should execute navigate on controller with given arguments" {
+        navigate(destinationId, destinationType)
+
+        verify { controller.navigate(Destination(destinationId, destinationType)) }
     }
 })
 
