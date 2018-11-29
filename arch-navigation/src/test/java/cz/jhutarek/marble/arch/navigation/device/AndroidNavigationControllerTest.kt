@@ -7,14 +7,14 @@ internal class AndroidNavigationControllerTest : InstancePerClassStringSpec({
 
     val controller = AndroidNavigationController()
 
-    "observable should have no default value after construction" {
-        controller.observe().test()
+    "destination requests observable should have no default value after construction" {
+        controller.observeDestinationRequests().test()
             .assertNoValues()
             .assertNotTerminated()
     }
 
-    "should emit value passed to navigate to" {
-        val testObservable = controller.observe().test()
+    "destination requests observable should emit value passed to navigate" {
+        val testObservable = controller.observeDestinationRequests().test()
 
         controller.navigate(destination)
 

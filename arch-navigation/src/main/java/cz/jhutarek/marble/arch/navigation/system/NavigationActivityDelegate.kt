@@ -21,7 +21,7 @@ class NavigationActivityDelegate @Inject constructor(
     fun onStart(activity: Activity) {
         logD("Bind navigation destinations")
 
-        destinationsDisposable = navigationController.observe().subscribe {
+        destinationsDisposable = navigationController.observeDestinationRequests().subscribe {
             activity.findNavController(navigationHostResId).navigate(it)
         }
     }
