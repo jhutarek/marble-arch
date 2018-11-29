@@ -15,7 +15,7 @@ import cz.jhutarek.marble.arch.mvvm.model.State as MarbleState
 class OverviewViewModel @Inject constructor(
     observeCurrentWeather: CurrentWeatherUseCase.Observe,
     private val loadCurrentWeather: CurrentWeatherUseCase.Load,
-    private val navigateTo: NavigationUseCase.NavigateTo
+    private val navigate: NavigationUseCase.Navigate
 ) : ViewModel<OverviewViewModel.State>(State()) {
 
     data class State(
@@ -43,7 +43,7 @@ class OverviewViewModel @Inject constructor(
     fun showSettings() {
         logI("Show settings")
 
-        navigateTo(R.id.navigation__settings)
+        navigate(R.id.navigation__settings)
     }
 
     fun setInput(input: CharSequence) {

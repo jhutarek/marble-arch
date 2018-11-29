@@ -25,10 +25,10 @@ internal class OverviewViewModelTest : InstancePerClassStringSpec({
         every { this@mockk(Unit) } returns Observable.never()
     }
     val loadCurrentWeather = mockk<CurrentWeatherUseCase.Load>(relaxUnitFun = true)
-    val navigateTo = mockk<NavigationUseCase.NavigateTo>(relaxUnitFun = true)
+    val navigate = mockk<NavigationUseCase.Navigate>(relaxUnitFun = true)
 
     "view model should execute observe use case in constructor" {
-        OverviewViewModel(observe, loadCurrentWeather, navigateTo)
+        OverviewViewModel(observe, loadCurrentWeather, navigate)
 
         verify { observe(Unit) }
     }
@@ -42,7 +42,7 @@ internal class OverviewViewModelTest : InstancePerClassStringSpec({
         ) { expectedEnabled, data ->
             every { observe(Unit) } returns Observable.just(data)
 
-            OverviewViewModel(observe, loadCurrentWeather, navigateTo).states
+            OverviewViewModel(observe, loadCurrentWeather, navigate).states
                 .test()
                 .assertValueAt(0) { it.refreshEnabled == expectedEnabled }
         }
@@ -51,13 +51,13 @@ internal class OverviewViewModelTest : InstancePerClassStringSpec({
     "view model should map observed data to input state when loaded" {
         every { observe(Unit) } returns Observable.just(Data.Loaded(Unit, currentWeather))
 
-        OverviewViewModel(observe, loadCurrentWeather, navigateTo).states
+        OverviewViewModel(observe, loadCurrentWeather, navigate).states
             .test()
             .assertValueAt(0) { it.input == location }
     }
 
     "view model should execute load current weather use case on refresh with current input" {
-        OverviewViewModel(observe, loadCurrentWeather, navigateTo).apply {
+        OverviewViewModel(observe, loadCurrentWeather, navigate).apply {
             setInput(input)
 
             refresh()
@@ -67,7 +67,7 @@ internal class OverviewViewModelTest : InstancePerClassStringSpec({
     }
 
     "view model should update input when set" {
-        val viewModel = OverviewViewModel(observe, loadCurrentWeather, navigateTo)
+        val viewModel = OverviewViewModel(observe, loadCurrentWeather, navigate)
         val testObserver = viewModel.states.test()
 
         viewModel.setInput(input)
@@ -76,10 +76,10 @@ internal class OverviewViewModelTest : InstancePerClassStringSpec({
     }
 
     "view model should navigate to settings" {
-        val viewModel = OverviewViewModel(observe, loadCurrentWeather, navigateTo)
+        val viewModel = OverviewViewModel(observe, loadCurrentWeather, navigate)
 
         viewModel.showSettings()
 
-        verify { navigateTo(R.id.navigation__settings) }
+        verify { navigate(R.id.navigation__settings) }
     }
 })

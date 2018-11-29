@@ -1,5 +1,5 @@
 package cz.jhutarek.marble.arch.navigation.domain
 
 interface NavigationController {
-    fun navigateTo(destination: Int)
+    fun navigate(destination: Int)
 }

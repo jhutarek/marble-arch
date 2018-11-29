@@ -14,7 +14,7 @@ class AndroidNavigationController @Inject constructor() : NavigationController {
 
     fun observe(): Observable<Int> = destinationsRelay.hide()
 
-    override fun navigateTo(destination: Int) {
+    override fun navigate(destination: Int) {
         logI("Navigate to: $destination")
 
         destinationsRelay.accept(destination)

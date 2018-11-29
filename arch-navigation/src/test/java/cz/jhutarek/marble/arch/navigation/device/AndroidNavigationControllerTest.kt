@@ -16,7 +16,7 @@ internal class AndroidNavigationControllerTest : InstancePerClassStringSpec({
     "should emit value passed to navigate to" {
         val testObservable = controller.observe().test()
 
-        controller.navigateTo(destination)
+        controller.navigate(destination)
 
         testObservable.assertValue(destination)
     }
