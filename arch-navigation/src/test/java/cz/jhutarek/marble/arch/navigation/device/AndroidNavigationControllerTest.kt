@@ -20,4 +20,18 @@ internal class AndroidNavigationControllerTest : InstancePerClassStringSpec({
 
         testObservable.assertValue(destination)
     }
+
+    "observe observable should have no default value after construction" {
+        controller.observe().test()
+            .assertNoValues()
+            .assertNotTerminated()
+    }
+
+    "observe observable should emit value passed to notify navigation executed" {
+        val testObservable = controller.observe().test()
+
+        controller.notifyNavigationExecuted(destination)
+
+        testObservable.assertValue(destination)
+    }
 })
