@@ -21,7 +21,7 @@ class MainActivity : MarbleActivity<MainViewModel, MainViewModel.State>() {
     override fun onStop() {
         super.onStop()
 
-        navigationDelegate.onStop()
+        navigationDelegate.onStop(this)
     }
 
     override fun onSupportNavigateUp() = navigationDelegate.onSupportNavigateUp(this)
