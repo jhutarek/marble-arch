@@ -26,6 +26,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     api project(':arch-usecase')
+    implementation project(':arch-log')
 
     implementation 'com.google.dagger:dagger:2.19'
 
