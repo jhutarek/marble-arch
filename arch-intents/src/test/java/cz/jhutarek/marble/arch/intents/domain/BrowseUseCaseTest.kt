@@ -1,46 +1,18 @@
 package cz.jhutarek.marble.arch.intents.domain
 
-import android.content.Context
-import android.content.Intent
-import android.content.Intent.ACTION_VIEW
-import android.net.Uri
 import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
-import io.kotlintest.shouldBe
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
+import io.mockk.verify
 
-internal class BrowseUseCaseTest : InstancePerClassStringSpec({
-    val context = mockk<Context>(relaxUnitFun = true)
-    val uri = Uri.parse("http://example.com")
-    val error = IllegalStateException()
+internal class IntentUseCaseBrowseTest : InstancePerClassStringSpec({
+    val url = "url"
+    val intentController = mockk<IntentController>(relaxUnitFun = true)
 
-    val browse = BrowseUseCase(context)
+    val browse = IntentUseCase.Browse(intentController)
 
-    "use case should try to start the activity with correct settings" {
-        val slot = slot<Intent>()
-        every { context.startActivity(capture(slot)) } returns Unit
+    "use case should delegate browse action to controller" {
+        browse(url)
 
-        browse(uri)
-            .test()
-
-        with(slot.captured) {
-            action shouldBe ACTION_VIEW
-            data shouldBe uri
-        }
-    }
-
-    "use case should return complete completable if activity is started" {
-        browse(uri)
-            .test()
-            .assertComplete()
-    }
-
-    "use case should return error completable if start activity throws an exception" {
-        every { context.startActivity(any())} throws error
-
-        browse(uri)
-            .test()
-            .assertError(error)
+        verify { intentController.browse(url) }
     }
 })
