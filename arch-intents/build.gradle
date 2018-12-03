@@ -1,0 +1,48 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'de.mobilej.unmock'
+
+group = 'com.github.jhutarek.marble-arch'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+
+    api project(':arch-usecase')
+
+    implementation 'com.google.dagger:dagger:2.19'
+
+    testImplementation project(':arch-test')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    testImplementation 'io.kotlintest:kotlintest-runner-junit5:3.1.10'
+    testImplementation 'io.kotlintest:kotlintest-assertions:3.1.10'
+    testImplementation 'io.mockk:mockk:1.8.12'
+
+    unmock 'org.robolectric:android-all:4.3_r2-robolectric-0'
+}
+
+unMock {
+    keepStartingWith "android.content."
+    keep "android.view.CompatibilityInfoHolder"
+    keep "android.net.Uri"
+    keepStartingWith "libcore."
+    keepAndRename "java.nio.charset.Charsets" to "xjava.nio.charset.Charsets"
+}

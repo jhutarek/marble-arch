@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app-example/app-example.iml" filepath="$PROJECT_DIR$/app-example/app-example.iml" />
       <module fileurl="file://$PROJECT_DIR$/arch-application/arch-application.iml" filepath="$PROJECT_DIR$/arch-application/arch-application.iml" />
+      <module fileurl="file://$PROJECT_DIR$/arch-intents/arch-intents.iml" filepath="$PROJECT_DIR$/arch-intents/arch-intents.iml" />
       <module fileurl="file://$PROJECT_DIR$/arch-log/arch-log.iml" filepath="$PROJECT_DIR$/arch-log/arch-log.iml" />
       <module fileurl="file://$PROJECT_DIR$/arch-mvvm/arch-mvvm.iml" filepath="$PROJECT_DIR$/arch-mvvm/arch-mvvm.iml" />
       <module fileurl="file://$PROJECT_DIR$/arch-navigation/arch-navigation.iml" filepath="$PROJECT_DIR$/arch-navigation/arch-navigation.iml" />
