@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
 import io.kotlintest.shouldBe
@@ -27,6 +28,7 @@ internal class AndroidIntentControllerTest : InstancePerClassStringSpec({
         with(slot.captured) {
             action shouldBe ACTION_VIEW
             data shouldBe Uri.parse(url)
+            flags shouldBe FLAG_ACTIVITY_NEW_TASK
         }
     }
 
