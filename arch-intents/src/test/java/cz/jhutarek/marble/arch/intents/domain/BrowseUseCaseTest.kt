@@ -10,12 +10,12 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 
-internal class BrowseUseCaseTest : InstancePerClassStringSpec({
+internal class IntentUseCaseBrowseTest : InstancePerClassStringSpec({
     val context = mockk<Context>(relaxUnitFun = true)
     val uri = Uri.parse("http://example.com")
     val error = IllegalStateException()
 
-    val browse = BrowseUseCase(context)
+    val browse = IntentUseCase.Browse(context)
 
     "use case should try to start the activity with correct settings" {
         val slot = slot<Intent>()
@@ -37,7 +37,7 @@ internal class BrowseUseCaseTest : InstancePerClassStringSpec({
     }
 
     "use case should return error completable if start activity throws an exception" {
-        every { context.startActivity(any())} throws error
+        every { context.startActivity(any()) } throws error
 
         browse(uri)
             .test()
