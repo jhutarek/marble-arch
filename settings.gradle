@@ -1,1 +1,1 @@
-include ':app-example', ':arch-mvvm', ':arch-usecase', ':arch-repository', ':arch-resources', ':arch-test', ':arch-application', ':arch-log', ':arch-navigation', ':arch-intents'
+include ':app-example', ':arch-mvvm', ':arch-usecase', ':arch-repository', ':arch-resources', ':test-specs', ':arch-application', ':arch-log', ':arch-navigation', ':arch-intents', ':test-rx'

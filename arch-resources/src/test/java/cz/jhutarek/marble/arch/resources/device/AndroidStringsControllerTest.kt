@@ -1,7 +1,7 @@
 package cz.jhutarek.marble.arch.resources.device
 
 import android.content.Context
-import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
+import cz.jhutarek.marble.test.infrastructure.InstancePerClassStringSpec
 import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockk

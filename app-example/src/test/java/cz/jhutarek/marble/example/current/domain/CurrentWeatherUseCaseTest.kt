@@ -1,7 +1,7 @@
 package cz.jhutarek.marble.example.current.domain
 
 import cz.jhutarek.marble.arch.repository.model.Data
-import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
+import cz.jhutarek.marble.test.infrastructure.InstancePerClassStringSpec
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherRepository.Query
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Load
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Observe

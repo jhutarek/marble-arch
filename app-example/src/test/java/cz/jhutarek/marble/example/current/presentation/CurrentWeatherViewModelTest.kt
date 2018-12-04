@@ -2,7 +2,7 @@ package cz.jhutarek.marble.example.current.presentation
 
 import cz.jhutarek.marble.arch.repository.model.Data
 import cz.jhutarek.marble.arch.resources.domain.StringsUseCase
-import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
+import cz.jhutarek.marble.test.infrastructure.InstancePerClassStringSpec
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
 import cz.jhutarek.marble.example.current.model.CurrentWeather
 import cz.jhutarek.marble.example.current.model.CurrentWeather.DescriptionCode.*

@@ -2,7 +2,7 @@ package cz.jhutarek.marble.arch.navigation.device
 
 import cz.jhutarek.marble.arch.navigation.model.Destination
 import cz.jhutarek.marble.arch.navigation.model.Destination.Type.POP_TO_PREVIOUS
-import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
+import cz.jhutarek.marble.test.infrastructure.InstancePerClassStringSpec
 
 internal class AndroidNavigationControllerTest : InstancePerClassStringSpec({
     val destinationId = 123

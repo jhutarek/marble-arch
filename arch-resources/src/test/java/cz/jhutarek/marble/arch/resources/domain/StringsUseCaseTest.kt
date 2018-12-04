@@ -1,6 +1,6 @@
 package cz.jhutarek.marble.arch.resources.domain
 
-import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
+import cz.jhutarek.marble.test.infrastructure.InstancePerClassStringSpec
 import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockk
