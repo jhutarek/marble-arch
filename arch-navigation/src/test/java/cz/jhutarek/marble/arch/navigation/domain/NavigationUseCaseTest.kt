@@ -2,7 +2,7 @@ package cz.jhutarek.marble.arch.navigation.domain
 
 import cz.jhutarek.marble.arch.navigation.model.Destination
 import cz.jhutarek.marble.arch.navigation.model.Destination.Type.POP_TO_PREVIOUS
-import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
+import cz.jhutarek.marble.test.infrastructure.InstancePerClassStringSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

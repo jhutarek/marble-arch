@@ -1,4 +1,4 @@
-package cz.jhutarek.marble.arch.test.infrastructure
+package cz.jhutarek.marble.test.infrastructure
 
 import io.kotlintest.extensions.TestListener
 import io.kotlintest.specs.AbstractStringSpec

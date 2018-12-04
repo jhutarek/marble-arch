@@ -4,7 +4,7 @@ import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepository
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Error.Companion.EXPECTED_ERROR
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Value.Companion.EXPECTED_VALUE
 import cz.jhutarek.marble.arch.repository.model.Data
-import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
+import cz.jhutarek.marble.test.infrastructure.InstancePerClassStringSpec
 import io.kotlintest.data.forall
 import io.kotlintest.inspectors.forAll
 import io.kotlintest.tables.row

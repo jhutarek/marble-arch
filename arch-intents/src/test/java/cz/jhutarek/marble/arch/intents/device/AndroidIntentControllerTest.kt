@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
-import cz.jhutarek.marble.arch.test.infrastructure.InstancePerClassStringSpec
+import cz.jhutarek.marble.test.infrastructure.InstancePerClassStringSpec
 import io.kotlintest.shouldBe
 import io.mockk.every
 import io.mockk.mockk
