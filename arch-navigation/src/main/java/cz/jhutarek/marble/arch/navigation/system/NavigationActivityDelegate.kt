@@ -7,8 +7,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import cz.jhutarek.marble.arch.log.infrastructure.logD
 import cz.jhutarek.marble.arch.navigation.device.AndroidNavigationController
-import cz.jhutarek.marble.arch.navigation.model.Destination.Type.ADD_TO_TOP
-import cz.jhutarek.marble.arch.navigation.model.Destination.Type.POP_TO_PREVIOUS
+import cz.jhutarek.marble.arch.navigation.model.Destination.Type.*
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,12 +30,19 @@ class NavigationActivityDelegate @Inject constructor(
 
         destinationsDisposable = navigationController.observeDestinationRequests().subscribe {
             when (it.type) {
-                ADD_TO_TOP -> systemNavigationController.navigate(it.id)
-                POP_TO_PREVIOUS -> systemNavigationController.navigate(
+                PUSH_ON_TOP -> systemNavigationController.navigate(it.id)
+                POP_TO_PREVIOUS_INSTANCE -> systemNavigationController.navigate(
                     it.id,
                     Bundle.EMPTY,
                     NavOptions.Builder()
                         .setPopUpTo(it.id, true)
+                        .build()
+                )
+                POP_ALL_THEN_PUSH -> systemNavigationController.navigate(
+                    it.id,
+                    Bundle.EMPTY,
+                    NavOptions.Builder()
+                        .setPopUpTo(systemNavigationController.graph.startDestination, true)
                         .build()
                 )
             }
