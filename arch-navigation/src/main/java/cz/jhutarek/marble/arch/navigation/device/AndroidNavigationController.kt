@@ -1,6 +1,6 @@
 package cz.jhutarek.marble.arch.navigation.device
 
-import com.jakewharton.rxrelay2.BehaviorRelay
+import com.jakewharton.rxrelay2.PublishRelay
 import cz.jhutarek.marble.arch.log.infrastructure.logD
 import cz.jhutarek.marble.arch.log.infrastructure.logI
 import cz.jhutarek.marble.arch.navigation.domain.NavigationController
@@ -12,8 +12,8 @@ import javax.inject.Singleton
 @Singleton
 class AndroidNavigationController @Inject constructor() : NavigationController {
 
-    private val destinationRequestsRelay = BehaviorRelay.create<Destination>()
-    private val observeRelay = BehaviorRelay.create<Int>()
+    private val destinationRequestsRelay = PublishRelay.create<Destination>()
+    private val observeRelay = PublishRelay.create<Int>()
 
     fun observeDestinationRequests(): Observable<Destination> = destinationRequestsRelay.hide()
     override fun observe(): Observable<Int> = observeRelay.hide()
