@@ -27,6 +27,8 @@ abstract class MarbleActivity<M : ViewModel<S>, S : State> : AppCompatActivity()
 
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
+        onBeforeCreate()
+
         super.onCreate(savedInstanceState)
 
         setContentView(layoutResId)
@@ -64,6 +66,8 @@ abstract class MarbleActivity<M : ViewModel<S>, S : State> : AppCompatActivity()
         viewsDisposable?.clear()
         viewsDisposable = null
     }
+
+    protected open fun onBeforeCreate() {}
 
     protected open fun onInitializeViews() {}
 
