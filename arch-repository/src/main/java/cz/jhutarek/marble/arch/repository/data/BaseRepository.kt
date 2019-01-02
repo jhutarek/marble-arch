@@ -2,11 +2,12 @@ package cz.jhutarek.marble.arch.repository.data
 
 import com.jakewharton.rxrelay2.PublishRelay
 import cz.jhutarek.marble.arch.repository.domain.Repository
-import cz.jhutarek.marble.arch.repository.model.Data
+import cz.jhutarek.marble.arch.repository.model.LegacyData
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 
+@Deprecated("Do not use, will be changed or removed")
 abstract class BaseRepository<Q : Any, D : Any>(
     source: Source<Q, D>,
     private vararg val caches: Cache<Q, D>
@@ -15,9 +16,9 @@ abstract class BaseRepository<Q : Any, D : Any>(
     private data class IndexedResult<out D : Any>(val index: Int, val value: D)
 
     private val allSources = caches.toList() + source
-    private val relay = PublishRelay.create<Data<Q, D>>()
+    private val relay = PublishRelay.create<LegacyData<Q, D>>()
 
-    final override fun observe(): Observable<Data<Q, D>> = relay.hide().distinctUntilChanged()
+    final override fun observe(): Observable<LegacyData<Q, D>> = relay.hide().distinctUntilChanged()
 
     final override fun load(query: Q) {
         allSources
@@ -28,11 +29,11 @@ abstract class BaseRepository<Q : Any, D : Any>(
             .let { Maybe.concat(it) }
             .firstElement()
             .flatMap { storeValueInCaches(query, it) }
-            .map { Data.Loaded(query, it) as Data<Q, D> }
-            .toSingle(Data.Empty(query))
+            .map { LegacyData.Loaded(query, it) as LegacyData<Q, D> }
+            .toSingle(LegacyData.Empty(query))
             .toObservable()
-            .startWith(Data.Loading(query))
-            .onErrorReturn { Data.Error(query, it) }
+            .startWith(LegacyData.Loading(query))
+            .onErrorReturn { LegacyData.Error(query, it) }
             .subscribe(relay)
     }
 
@@ -43,9 +44,9 @@ abstract class BaseRepository<Q : Any, D : Any>(
                 Completable.fromAction { load(query) }
             )
         )
-            .toObservable<Data<Q, D>>()
-            .startWith(Data.Loading(query))
-            .onErrorReturn { Data.Error(query, it) }
+            .toObservable<LegacyData<Q, D>>()
+            .startWith(LegacyData.Loading(query))
+            .onErrorReturn { LegacyData.Error(query, it) }
             .subscribe(relay)
     }
 

@@ -3,7 +3,7 @@ package cz.jhutarek.marble.arch.repository.data
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.*
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Error.Companion.EXPECTED_ERROR
 import cz.jhutarek.marble.arch.repository.data.BaseRepositoryTest.MockRepositoryBuilder.SourceResult.Value.Companion.EXPECTED_VALUE
-import cz.jhutarek.marble.arch.repository.model.Data
+import cz.jhutarek.marble.arch.repository.model.LegacyData
 import cz.jhutarek.marble.test.infrastructure.InstancePerClassStringSpec
 import io.kotlintest.data.forall
 import io.kotlintest.inspectors.forAll
@@ -129,7 +129,7 @@ internal class BaseRepositoryTest : InstancePerClassStringSpec() {
 
                 repository.load(query)
 
-                testObserver.assertValueAt(0, Data.Loading(query))
+                testObserver.assertValueAt(0, LegacyData.Loading(query))
             }
         }
 
@@ -148,7 +148,7 @@ internal class BaseRepositoryTest : InstancePerClassStringSpec() {
 
                     repository.load(query)
 
-                    testObserver.assertValueAt(1, Data.Loaded(query, EXPECTED_VALUE))
+                    testObserver.assertValueAt(1, LegacyData.Loaded(query, EXPECTED_VALUE))
                 }
             }
         }
@@ -168,7 +168,7 @@ internal class BaseRepositoryTest : InstancePerClassStringSpec() {
 
                     repository.load(query)
 
-                    testObserver.assertValueAt(1, Data.Error(query, EXPECTED_ERROR))
+                    testObserver.assertValueAt(1, LegacyData.Error(query, EXPECTED_ERROR))
                 }
             }
         }
@@ -185,7 +185,7 @@ internal class BaseRepositoryTest : InstancePerClassStringSpec() {
 
                     repository.load(query)
 
-                    testObserver.assertValueAt(1, Data.Empty(query))
+                    testObserver.assertValueAt(1, LegacyData.Empty(query))
                 }
             }
         }
@@ -220,7 +220,7 @@ internal class BaseRepositoryTest : InstancePerClassStringSpec() {
 
                 repository.load(query)
 
-                testObserver.assertValueAt(1, Data.Error(query, EXPECTED_ERROR))
+                testObserver.assertValueAt(1, LegacyData.Error(query, EXPECTED_ERROR))
             }
         }
 
@@ -256,7 +256,7 @@ internal class BaseRepositoryTest : InstancePerClassStringSpec() {
 
                 repository.update(query)
 
-                testObserver.assertValueAt(0, Data.Loading(query))
+                testObserver.assertValueAt(0, LegacyData.Loading(query))
             }
         }
 
@@ -278,7 +278,7 @@ internal class BaseRepositoryTest : InstancePerClassStringSpec() {
 
                 repository.update(query)
 
-                testObserver.assertValueAt(1, Data.Error(query, EXPECTED_ERROR))
+                testObserver.assertValueAt(1, LegacyData.Error(query, EXPECTED_ERROR))
             }
         }
     }

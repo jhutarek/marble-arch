@@ -1,7 +1,7 @@
 package cz.jhutarek.marble.example.current.presentation
 
 import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
-import cz.jhutarek.marble.arch.repository.model.Data
+import cz.jhutarek.marble.arch.repository.model.LegacyData
 import cz.jhutarek.marble.arch.resources.domain.StringsUseCase
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
 import cz.jhutarek.marble.example.current.model.CurrentWeather.DescriptionCode.*
@@ -51,17 +51,17 @@ class CurrentWeatherViewModel @Inject constructor(
         observeCurrentWeather(Unit)
             .map {
                 when (it) {
-                    is Data.Empty -> {
+                    is LegacyData.Empty -> {
                         State(
                             emptyVisible = true
                         )
                     }
-                    is Data.Loading -> {
+                    is LegacyData.Loading -> {
                         State(
                             loadingVisible = true
                         )
                     }
-                    is Data.Loaded -> {
+                    is LegacyData.Loaded -> {
                         State(
                             dataVisible = true,
                             timestamp = it.value.timestamp?.format(DateTimeFormatter.ofPattern("dd. LLLL H:mm")),
@@ -86,7 +86,7 @@ class CurrentWeatherViewModel @Inject constructor(
                             ).joinToString(separator = getString(R.string.current__additional_info_separator))
                         )
                     }
-                    is Data.Error -> {
+                    is LegacyData.Error -> {
                         State(
                             errorVisible = true,
                             error = it.error.toString().let { getString(R.string.current__error).format(it) }

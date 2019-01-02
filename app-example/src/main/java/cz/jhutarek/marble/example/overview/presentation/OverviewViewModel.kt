@@ -3,7 +3,7 @@ package cz.jhutarek.marble.example.overview.presentation
 import cz.jhutarek.marble.arch.log.infrastructure.logI
 import cz.jhutarek.marble.arch.mvvm.presentation.ViewModel
 import cz.jhutarek.marble.arch.navigation.domain.NavigationUseCase
-import cz.jhutarek.marble.arch.repository.model.Data
+import cz.jhutarek.marble.arch.repository.model.LegacyData
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Load.ByCity
 import cz.jhutarek.marblearch.R
@@ -27,8 +27,8 @@ class OverviewViewModel @Inject constructor(
         observeCurrentWeather(Unit)
             .map {
                 State(
-                    input = if (it is Data.Loaded) it.value.location else statesRelay.value.input,
-                    refreshEnabled = it is Data.Empty || it is Data.Loaded || it is Data.Error
+                    input = if (it is LegacyData.Loaded) it.value.location else statesRelay.value.input,
+                    refreshEnabled = it is LegacyData.Empty || it is LegacyData.Loaded || it is LegacyData.Error
                 )
             }
             .subscribe(statesRelay)

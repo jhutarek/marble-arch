@@ -1,6 +1,6 @@
 package cz.jhutarek.marble.example.current.domain
 
-import cz.jhutarek.marble.arch.repository.model.Data
+import cz.jhutarek.marble.arch.repository.model.LegacyData
 import cz.jhutarek.marble.test.infrastructure.InstancePerClassStringSpec
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherRepository.Query
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Load
@@ -14,8 +14,8 @@ import io.reactivex.Observable
 internal class ObserveUseCaseTest : InstancePerClassStringSpec({
     val repository = mockk<CurrentWeatherRepository>()
     val city = "any city"
-    val repositoryData: Data<CurrentWeatherRepository.Query, CurrentWeather> = Data.Loading(Query(city))
-    val expectedMappedData = Data.Loading(Unit)
+    val repositoryData: LegacyData<CurrentWeatherRepository.Query, CurrentWeather> = LegacyData.Loading(Query(city))
+    val expectedMappedData = LegacyData.Loading(Unit)
 
     val observe = Observe(repository)
 

@@ -1,6 +1,6 @@
 package cz.jhutarek.marble.example.current.presentation
 
-import cz.jhutarek.marble.arch.repository.model.Data
+import cz.jhutarek.marble.arch.repository.model.LegacyData
 import cz.jhutarek.marble.arch.resources.domain.StringsUseCase
 import cz.jhutarek.marble.test.infrastructure.InstancePerClassStringSpec
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
@@ -42,7 +42,7 @@ internal class CurrentWeatherViewModelTest : InstancePerClassStringSpec({
     val additionalInfoSeparatorString = " | "
 
     val observeCurrentWeather = mockk<CurrentWeatherUseCase.Observe> {
-        every { this@mockk(any()) } returns Observable.never<Data<Unit, CurrentWeather>>()
+        every { this@mockk(any()) } returns Observable.never<LegacyData<Unit, CurrentWeather>>()
     }
     val getString = mockk<StringsUseCase.GetString> {
         every { this@mockk(R.string.current__error) } returns errorString
@@ -77,7 +77,7 @@ internal class CurrentWeatherViewModelTest : InstancePerClassStringSpec({
                     descriptionText = null,
                     additionalInfo = null
                 ),
-                Data.Empty(Unit)
+                LegacyData.Empty(Unit)
             ),
             row(
                 State(
@@ -93,7 +93,7 @@ internal class CurrentWeatherViewModelTest : InstancePerClassStringSpec({
                     descriptionText = null,
                     additionalInfo = null
                 ),
-                Data.Loading(Unit)
+                LegacyData.Loading(Unit)
             ),
             row(
                 State(
@@ -109,7 +109,7 @@ internal class CurrentWeatherViewModelTest : InstancePerClassStringSpec({
                     descriptionText = null,
                     additionalInfo = null
                 ),
-                Data.Error(Unit, error)
+                LegacyData.Error(Unit, error)
             ),
             row(
                 State(
@@ -130,7 +130,7 @@ internal class CurrentWeatherViewModelTest : InstancePerClassStringSpec({
                         currentWeather.sunsetTimestamp?.format(DateTimeFormatter.ofPattern("H:mm"))?.let { sunsetString.format(it) }
                     ).joinToString(separator = additionalInfoSeparatorString)
                 ),
-                Data.Loaded(Unit, currentWeather)
+                LegacyData.Loaded(Unit, currentWeather)
             )
         ) { expectedState, data ->
             every { observeCurrentWeather(Unit) } returns Observable.just(data)
@@ -156,7 +156,7 @@ internal class CurrentWeatherViewModelTest : InstancePerClassStringSpec({
             row(R.drawable.ic_unknown, UNKNOWN)
         ) { expectedResId, descriptionCode ->
             every { observeCurrentWeather(Unit) } returns
-                    Observable.just(Data.Loaded(Unit, currentWeather.copy(descriptionCode = descriptionCode)))
+                    Observable.just(LegacyData.Loaded(Unit, currentWeather.copy(descriptionCode = descriptionCode)))
 
             CurrentWeatherViewModel(observeCurrentWeather, getString).states
                 .test()

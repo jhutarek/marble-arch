@@ -1,7 +1,7 @@
 package cz.jhutarek.marble.example.overview.presentation
 
 import cz.jhutarek.marble.arch.navigation.domain.NavigationUseCase
-import cz.jhutarek.marble.arch.repository.model.Data
+import cz.jhutarek.marble.arch.repository.model.LegacyData
 import cz.jhutarek.marble.test.infrastructure.InstancePerClassStringSpec
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherUseCase.Load
@@ -35,10 +35,10 @@ internal class OverviewViewModelTest : InstancePerClassStringSpec({
 
     "view model should map observed data to refresh enabled state" {
         forall(
-            row(true, Data.Empty(Unit)),
-            row(false, Data.Loading(Unit)),
-            row(true, Data.Loaded(Unit, currentWeather)),
-            row(true, Data.Error(Unit, error))
+            row(true, LegacyData.Empty(Unit)),
+            row(false, LegacyData.Loading(Unit)),
+            row(true, LegacyData.Loaded(Unit, currentWeather)),
+            row(true, LegacyData.Error(Unit, error))
         ) { expectedEnabled, data ->
             every { observe(Unit) } returns Observable.just(data)
 
@@ -49,7 +49,7 @@ internal class OverviewViewModelTest : InstancePerClassStringSpec({
     }
 
     "view model should map observed data to input state when loaded" {
-        every { observe(Unit) } returns Observable.just(Data.Loaded(Unit, currentWeather))
+        every { observe(Unit) } returns Observable.just(LegacyData.Loaded(Unit, currentWeather))
 
         OverviewViewModel(observe, loadCurrentWeather, navigate).states
             .test()

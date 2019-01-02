@@ -1,6 +1,6 @@
 package cz.jhutarek.marble.example.current.domain
 
-import cz.jhutarek.marble.arch.repository.model.Data
+import cz.jhutarek.marble.arch.repository.model.LegacyData
 import cz.jhutarek.marble.arch.repository.model.mapQuery
 import cz.jhutarek.marble.arch.usecase.domain.UseCase
 import cz.jhutarek.marble.example.current.domain.CurrentWeatherRepository.Query
@@ -13,9 +13,9 @@ sealed class CurrentWeatherUseCase<in I, out O> : UseCase<I, O> {
 
     @Singleton
     class Observe @Inject constructor(private val repository: CurrentWeatherRepository) :
-        CurrentWeatherUseCase<Unit, Observable<Data<Unit, CurrentWeather>>>() {
+        CurrentWeatherUseCase<Unit, Observable<LegacyData<Unit, CurrentWeather>>>() {
 
-        override operator fun invoke(input: Unit): Observable<Data<Unit, CurrentWeather>> = repository.observe().mapQuery { Unit }
+        override operator fun invoke(input: Unit): Observable<LegacyData<Unit, CurrentWeather>> = repository.observe().mapQuery { Unit }
     }
 
     @Singleton
