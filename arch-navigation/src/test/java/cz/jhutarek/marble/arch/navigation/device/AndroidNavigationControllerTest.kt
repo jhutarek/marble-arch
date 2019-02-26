@@ -35,6 +35,8 @@ internal class AndroidNavigationControllerTest : InstancePerClassStringSpec({
 
         controller.notifyNavigationExecuted(destinationId)
 
-        testObservable.assertValue(destinationId)
+        testObservable
+            .awaitCount(1)
+            .assertValue(destinationId)
     }
 })
