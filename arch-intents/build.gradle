@@ -28,13 +28,13 @@ dependencies {
     api project(':arch-usecase')
     implementation project(':arch-log')
 
-    implementation 'com.google.dagger:dagger:2.21'
+    implementation 'com.google.dagger:dagger:2.19'
 
     testImplementation project(':test-specs')
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
     testImplementation 'io.kotlintest:kotlintest-runner-junit5:3.1.10'
-    testImplementation 'io.kotlintest:kotlintest-assertions:3.2.1'
+    testImplementation 'io.kotlintest:kotlintest-assertions:3.1.10'
     testImplementation 'io.mockk:mockk:1.8.12'
 
     unmock 'org.robolectric:android-all:4.3_r2-robolectric-0'

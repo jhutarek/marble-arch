@@ -56,6 +56,7 @@ abstract class MarbleFragment<M : ViewModel<S>, S : State> : Fragment() {
         logD("Bind states")
         statesDisposable = onBindStates(
             viewModel.states
+                .distinctUntilChanged()
                 .observeOn(mainThread())
         )
     }

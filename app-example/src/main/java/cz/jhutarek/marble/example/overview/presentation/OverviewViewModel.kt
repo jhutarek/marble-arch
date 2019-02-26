@@ -27,7 +27,7 @@ class OverviewViewModel @Inject constructor(
         observeCurrentWeather(Unit)
             .map {
                 State(
-                    input = if (it is LegacyData.Loaded) it.value.location else statesRelay.value!!.input,
+                    input = if (it is LegacyData.Loaded) it.value.location else statesRelay.value.input,
                     refreshEnabled = it is LegacyData.Empty || it is LegacyData.Loaded || it is LegacyData.Error
                 )
             }
@@ -37,7 +37,7 @@ class OverviewViewModel @Inject constructor(
     fun refresh() {
         logI("Refresh")
 
-        loadCurrentWeather(ByCity(statesRelay.value!!.input.orEmpty()))
+        loadCurrentWeather(ByCity(statesRelay.value.input.orEmpty()))
     }
 
     fun showSettings() {
