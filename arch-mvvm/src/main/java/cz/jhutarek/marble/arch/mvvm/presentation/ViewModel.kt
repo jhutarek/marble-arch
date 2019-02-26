@@ -12,6 +12,6 @@ abstract class ViewModel<S : State>(defaultState: S) {
     val states: Observable<S> = statesRelay.hide().doOnNext { logI("$it") }
 
     protected fun BehaviorRelay<S>.accept(updater: (S) -> S) {
-        accept(updater(value))
+        accept(updater(value!!))
     }
 }

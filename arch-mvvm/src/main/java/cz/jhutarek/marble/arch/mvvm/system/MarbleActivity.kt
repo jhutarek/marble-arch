@@ -49,7 +49,6 @@ abstract class MarbleActivity<M : ViewModel<S>, S : State> : AppCompatActivity()
         logD("Bind states")
         statesDisposable = onBindStates(
             viewModel.states
-                .distinctUntilChanged()
                 .observeOn(mainThread())
         )
     }
