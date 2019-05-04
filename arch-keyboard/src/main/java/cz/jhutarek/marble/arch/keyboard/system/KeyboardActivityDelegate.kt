@@ -15,11 +15,16 @@ class KeyboardActivityDelegate @Inject constructor(
     private val androidKeyboardController: AndroidKeyboardController,
     private val rootViewResId: Int
 ) {
-
+    private var keyboardShowsDisposable: Disposable? = null
     private var keyboardHidesDisposable: Disposable? = null
 
     fun onStart(activity: Activity) {
         logD("Bind keyboard activity delegate")
+
+        keyboardShowsDisposable = androidKeyboardController.observeKeyboardShows().subscribe {
+            val inputMethodManager = activity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        }
 
         keyboardHidesDisposable = androidKeyboardController.observeKeyboardHides().subscribe {
             val inputMethodManager = activity.getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -29,6 +34,9 @@ class KeyboardActivityDelegate @Inject constructor(
 
     fun onStop() {
         logD("Unbind keyboard activity delegate")
+
+        keyboardShowsDisposable?.dispose()
+        keyboardShowsDisposable = null
 
         keyboardHidesDisposable?.dispose()
         keyboardHidesDisposable = null

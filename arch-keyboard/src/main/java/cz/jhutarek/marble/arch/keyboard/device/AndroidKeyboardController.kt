@@ -10,9 +10,17 @@ import javax.inject.Singleton
 @Singleton
 class AndroidKeyboardController @Inject constructor() : KeyboardController {
 
+    private val keyboardShowsRelay = PublishRelay.create<Unit>()
     private val keyboardHidesRelay = PublishRelay.create<Unit>()
 
+    fun observeKeyboardShows(): Observable<Unit> = keyboardShowsRelay.hide()
     fun observeKeyboardHides(): Observable<Unit> = keyboardHidesRelay.hide()
+
+    override fun showKeyboard() {
+        logI("Show keyboard")
+
+        keyboardShowsRelay.accept(Unit)
+    }
 
     override fun hideKeyboard() {
         logI("Hide keyboard")

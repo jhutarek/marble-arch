@@ -7,6 +7,13 @@ import javax.inject.Singleton
 sealed class KeyboardUseCase<in I, out O> : UseCase<I, O> {
 
     @Singleton
+    class ShowKeyboard @Inject constructor(private val keyboardController: KeyboardController) : KeyboardUseCase<Unit, Unit>() {
+        override fun invoke(input: Unit) {
+            keyboardController.showKeyboard()
+        }
+    }
+
+    @Singleton
     class HideKeyboard @Inject constructor(private val keyboardController: KeyboardController) : KeyboardUseCase<Unit, Unit>() {
         override fun invoke(input: Unit) {
             keyboardController.hideKeyboard()
